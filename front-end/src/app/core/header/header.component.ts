@@ -3,6 +3,7 @@ import {AuthService} from '../../auth/auth.service';
 import {Router} from '@angular/router';
 import {CartService} from "../../services/cart.service";
 import {Product} from "../../models/product.model";
+import {User} from "../../models/user.model";
 
 @Component({
   selector: 'app-header',
@@ -11,9 +12,8 @@ import {Product} from "../../models/product.model";
 })
 export class HeaderComponent implements OnInit {
 
-  public showHotCupIcon: boolean = false;
   public userIsLoggedIn: boolean = false;
-
+  public isDropdownOpen: boolean = false;
   public amountOfProducts: number = 0;
 
   constructor(private authService: AuthService, private router: Router, private cartService: CartService) {
@@ -39,6 +39,10 @@ export class HeaderComponent implements OnInit {
       .subscribe((loginState: boolean) => {
         this.userIsLoggedIn = loginState;
       });
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
   }
 
 }
