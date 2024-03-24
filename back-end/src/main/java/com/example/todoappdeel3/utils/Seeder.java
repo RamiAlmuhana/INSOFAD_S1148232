@@ -36,7 +36,6 @@ public class Seeder {
     public void seed(ContextRefreshedEvent event){
         this.seedProducts();
         this.seedUser();
-//        this.seedOrder();
     }
 
     private void seedProducts(){
@@ -74,15 +73,6 @@ public class Seeder {
         this.productDAO.createProduct(gtaSA);
         this.productDAO.createProduct(crashTeamRacing);
     }
-
-//    private void seedOrder(){
-//        Set<Product> products = new HashSet<>(productRepository.findAll());
-//        CustomUser user = userRepository.findByEmail("test@mail.com");
-//        PlacedOrder placedOrder1 = new PlacedOrder("Sem", "", "Bersee", "2215LM", 2, "",  user, products);
-//        PlacedOrder placedOrder2 = new PlacedOrder("Sem", "", "Treur", "2215LM", 2, "", user, products);
-//        this.orderDAO.createOrder(placedOrder1);
-//        this.orderDAO.createOrder(placedOrder2);
-//    }
 
     private void seedUser(){
         CustomUser customUser = new CustomUser();
