@@ -1,0 +1,22 @@
+<div class="d-flex">
+
+  <div class="col-md-4">
+    <img src="{{ product.imgURL }}" class="img-fluid rounded-start img-responsive rounded-end"
+         style="max-height: 150px;" alt="...">
+  </div>
+  <div class="p-2 w-100">
+    <h5>{{ product.name }}</h5>
+    <p>{{ product.price | currency }}</p>
+    <p>
+      <small>{{ product.description }}</small>
+    </p>
+  </div>
+  <div class="p-2 flex-shrink-1">
+    <a [routerLinkActive]="['active']" routerLink="/products/{{product.id}}" class="btn btn-secondary">
+      Show detail</a>
+    <button (click)="buyProduct(product)" class="btn btn-primary float-right">
+      Buy
+    </button>
+  </div>
+</div>
+<hr>

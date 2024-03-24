@@ -1,0 +1,13 @@
+<div *ngFor="let order of orders">
+  <p>Order ID: {{order.id}}</p>
+  <p>Order Date: {{order.orderDate | date: 'medium'}}</p>
+  <ul>
+    <li *ngFor="let product of order.products">
+      Product Name: {{product.name}}, Product Price: {{product.price | currency}}, Product Image: <img style="width: 100px" src="{{product.imgURL}}">
+    </li>
+  </ul>
+</div>
+
+<ng-template #noOrders>
+  <p>Geen bestellingen gevonden.</p>
+</ng-template>

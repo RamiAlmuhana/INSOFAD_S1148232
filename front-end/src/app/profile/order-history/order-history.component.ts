@@ -1,0 +1,28 @@
+import { Component, OnInit } from '@angular/core';
+import { OrderService } from '../../services/order.service'; // Pas dit pad aan naar waar je service zich bevindt
+import { Order } from '../../models/order.model'; // Pas dit pad aan naar waar je model zich bevindt
+import { CommonModule } from '@angular/common';
+
+
+@Component({
+  selector: 'app-order-history',
+  templateUrl: './order-history.component.html',
+  imports: [CommonModule],
+  standalone: true,
+  styleUrls: ['./order-history.component.scss']
+})
+export class OrderHistoryComponent implements OnInit {
+  orders: Order[] = [];
+
+  constructor(private orderService: OrderService) { }
+
+  ngOnInit() {
+    this.loadOrders();
+  }
+
+  loadOrders() {
+    this.orderService.getOrdersByCurrentUser().subscribe(orders => {
+      this.orders = orders;
+    });
+  }
+}

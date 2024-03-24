@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-sm-6">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group mb-3">
+        <label for="name">Voornaam</label>
+        <input type="text" class="form-control" formControlName="name" id="name">
+      </div>
+      <div class="form-group mb-3">
+        <label for="infix">Tussen Voegsel</label>
+        <input type="text" class="form-control" formControlName="infix" id="infix">
+      </div>
+      <div class="form-group mb-3">
+        <label for="lastName">Achternaam</label>
+        <input type="text" class="form-control" formControlName="lastName" id="lastName">
+      </div>
+      <div class="form-group mb-3">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" formControlName="email" id="email">
+      </div>
+      <div class="form-group mb-3">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" formControlName="password" id="password1">
+      </div>
+      <div class="form-group mb-3">
+        <label for="password2">Repeat password</label>
+        <input type="password2" class="form-control" formControlName="repeated_password" id="password2">
+      </div>
+      <button type="submit" class="btn btn-md btn-dark" [disabled]="!registerForm.valid">Sign up</button>
+    </form>
+  </div>
+</div>

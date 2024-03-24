@@ -1,0 +1,9 @@
+<h3>Producten overzicht</h3>
+
+@if (loadingProducts) {
+  <p>Loading products...</p>
+} @else {
+  @for (product of products; track $index) {
+    <app-product-thumbnail [product]="product" (onBuyProduct)="onBuyProduct(product)"></app-product-thumbnail>
+  }
+}

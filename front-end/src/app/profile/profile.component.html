@@ -1,0 +1,16 @@
+<div class="card col-9 align-items-center justify-content-center">
+  <div *ngIf="user" class="d-flex mt-5 mb-5 align-items-center justify-content-center">
+    <div class="col-6">
+      <img
+        src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+        class="img-fluid" style="width: 20vw">
+    </div>
+    <div class="col-6 justify-content-end">
+      <p>Name: {{ user.name }}</p>
+      <p>TussenVoegsel: {{ user.infix }}</p>
+      <p>Achternaam: {{ user.lastName }}</p>
+      <p>Email: {{ user.email }}</p>
+      <button class="btn btn-primary" [routerLink]="['/profile-update']">Wijzigen</button>
+    </div>
+  </div>
+</div>
