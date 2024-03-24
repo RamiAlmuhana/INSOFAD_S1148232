@@ -1,16 +1,22 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Product} from "../models/product.model";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterLink
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+
   @Input() public product!: Product;
   @Output() public onBuyProduct: EventEmitter<Product> = new EventEmitter<Product>();
+  public products: Product[] = new Array<Product>();
+  public loadingProducts: boolean = true;
 
   public buyProduct(product: Product) {
     this.onBuyProduct.emit(product);

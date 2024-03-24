@@ -1,8 +1,56 @@
-<h3>Home component</h3>
+<section class="w-100 px-3 py-5 bg-light" style="border-radius: .5rem;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-normal mb-0">Welcome to Gaming Webshop</h3>
+        </div>
+        <p>Welcome to the ultimate gaming destination where you can find the latest and greatest games!</p>
+        <p>Explore our wide selection of games and accessories, and get ready for endless hours of gaming fun.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi aspernatur reiciendis facere repellat distinctio
-  pariatur, odio non velit adipisci vitae atque, labore, possimus quidem. Architecto porro aut ab necessitatibus
-  distinctio.</p>
-
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit quidem culpa deserunt amet at a dignissimos vero
-  praesentium! Excepturi accusantium magni quasi vitae repellendus est, doloribus pariatur. Culpa, pariatur labore.</p>
+<!-- Featured product cards -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Featured Products</h2>
+    <div class="row">
+      <!-- Featured product cards go here -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/4/46/Grand_Theft_Auto_VI.png" alt="Product Image">
+          <div class="card-body">
+            <h4 class="card-title">Grand Theft Auto VI</h4>
+            <p class="card-text">Grand Theft Auto VI is an upcoming action-adventure game in development by Rockstar Games. It is due to be the eighth main Grand Theft Auto game,
+              following Grand Theft Auto V.</p>
+            <a [routerLink]="['products']" class="btn btn-primary">Go to products</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png" alt="Product Image">
+          <div class="card-body">
+            <h4 class="card-title">Minecraft</h4>
+            <p class="card-text">Minecraft is a 2011 sandbox game developed by Mojang Studios and originally released in 2009.
+              The game was created by Markus "Notch" Persson in the Java programming language.</p>
+            <a [routerLink]="['products']" class="btn btn-primary">Go to products</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSAMOK3cjH0oK89AraaQ_DJQ3EyioLRJxCnq0X2lLPXDisjyn1XOuwGkRLht5b1c7d7G6Uk2w" alt="Product Image">
+          <div class="card-body">
+            <h4 class="card-title">Mortal Kombar 1</h4>
+            <p class="card-text">Discover a reborn Mortal Kombat™ Universe created by the Fire God Liu Kang. Mortal Kombat™ 1
+              ushers in a new era of the iconic franchise with a new fighting system, game modes, and fatalities!</p>
+            <a [routerLink]="['products']" class="btn btn-primary">Go to products</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
