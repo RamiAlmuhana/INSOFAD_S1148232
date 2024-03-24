@@ -50,19 +50,6 @@ public class ProductController {
         return ResponseEntity.ok("Updated product with id" + id);
     }
 
-    @PutMapping("check/{id}")
-    public ResponseEntity<String> checkProduct(@PathVariable Long id){
-        this.productDAO.checkProduct(id);
-
-        return ResponseEntity.ok("Product checked with id " + id);
-    }
-
-    @PutMapping("uncheck/{id}")
-    public ResponseEntity<String> uncheckProduct(@PathVariable Long id){
-        this.productDAO.uncheckProduct(id);
-
-        return ResponseEntity.ok("Product uncheck with id " + id);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id){

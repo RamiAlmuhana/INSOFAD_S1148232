@@ -1,40 +1,42 @@
-<div class="container-fluid mt-5" style="width: 50%">
-  <form [formGroup]="bestelForm">
+<div class="container mt-5">
+  <form [formGroup]="bestelForm" style="width: 100%">
     <div class="row mb-4">
       <div class="col-md-4">
-        <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form1.1" class="form-control" placeholder="Voornaam" formControlName="Voornaam" required/>
+        <div class="form-outline">
+          <input type="text" id="form1.1" class="form-control" placeholder="Voornaam" formControlName="Voornaam" required>
         </div>
       </div>
       <div class="col-md-4">
-        <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form1.2" class="form-control" placeholder="Tussenvoegsel" formControlName="Tussenvoegsel"/>
+        <div class="form-outline">
+          <input type="text" id="form1.2" class="form-control" placeholder="Tussenvoegsel" formControlName="Tussenvoegsel">
         </div>
       </div>
       <div class="col-md-4">
-        <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form1.3" class="form-control" placeholder="Achternaam" formControlName="Achternaam" required/>
+        <div class="form-outline">
+          <input type="text" id="form1.3" class="form-control" placeholder="Achternaam" formControlName="Achternaam" required>
         </div>
       </div>
     </div>
     <div class="row mb-4">
       <div class="col-md-6">
-        <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form2.1" class="form-control" placeholder="Postcode" formControlName="Postcode" pattern="\d{4}[A-Z]{2}" required/>
+        <div class="form-outline">
+          <input type="text" id="form2.1" class="form-control" placeholder="Postcode" formControlName="Postcode" pattern="\d{4}[A-Z]{2}" required>
         </div>
       </div>
       <div class="col-md-6">
-        <div data-mdb-input-init class="form-outline">
-          <input type="number" id="form2.2" class="form-control" placeholder="Huisnummer" formControlName="Huisnummer" required/>
+        <div class="form-outline">
+          <input type="number" id="form2.2" class="form-control" placeholder="Huisnummer" formControlName="Huisnummer" required>
         </div>
       </div>
     </div>
-    <div data-mdb-input-init class="form-outline mb-4">
-      <textarea class="form-control" id="form3.2" rows="4" placeholder="Opmerkingen" formControlName="Opmerkingen"></textarea>
+    <div class="mb-4">
+      <div class="form-outline">
+        <textarea class="form-control" id="form3.2" rows="4" placeholder="Opmerkingen" formControlName="Opmerkingen"></textarea>
+      </div>
     </div>
     <div class="row mb-4">
       <div class="col-md text-end">
-        <button data-mdb-ripple-init [disabled]="!bestelForm.valid" type="button" class="btn btn-primary btn-block" (click)="onSubmit()">
+        <button [disabled]="!bestelForm.valid" type="button" class="btn btn-primary btn-block" (click)="onSubmit()">
           Bestelling betalen
         </button>
       </div>

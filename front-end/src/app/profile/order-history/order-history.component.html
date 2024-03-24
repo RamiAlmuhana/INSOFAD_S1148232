@@ -1,13 +1,22 @@
-<div *ngFor="let order of orders">
-  <p>Order ID: {{order.id}}</p>
-  <p>Order Date: {{order.orderDate | date: 'medium'}}</p>
-  <ul>
-    <li *ngFor="let product of order.products">
-      Product Name: {{product.name}}, Product Price: {{product.price | currency}}, Product Image: <img style="width: 100px" src="{{product.imgURL}}">
-    </li>
-  </ul>
+<div class="orders-container" *ngIf="orders && orders.length > 0; else noOrders">
+  <div class="order" *ngFor="let order of orders">
+    <p class="order-info">Order ID: {{order.id}}</p>
+    <p class="order-info">Order Date: {{order.orderDate | date: 'medium'}}</p>
+    <ul class="products-list">
+      <li class="product" *ngFor="let product of order.products">
+        <div class="product-details">
+          <p class="product-name">Product Name: {{product.name}}</p>
+          <p class="product-price">Price: {{product.price | currency: 'EUR'}}</p>
+        </div>
+        <div class="product-image">
+          <img src="{{product.imgURL}}" alt="{{product.name}}">
+        </div>
+      </li>
+    </ul>
+    <p class="order-total">Total: {{ calculateTotal(order.products) | currency: 'EUR' }}</p>
+  </div>
 </div>
 
 <ng-template #noOrders>
-  <p>Geen bestellingen gevonden.</p>
+  <p class="no-orders-message">Geen bestellingen gevonden.</p>
 </ng-template>

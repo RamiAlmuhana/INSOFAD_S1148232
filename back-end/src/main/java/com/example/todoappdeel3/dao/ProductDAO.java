@@ -77,23 +77,6 @@ public class ProductDAO {
         }
     }
 
-    public void checkProduct(Long id) {
-        this.toggleProduct(id, true);
-    }
-
-    public void uncheckProduct(Long id) {
-        this.toggleProduct(id, false);
-    }
-
-    private void toggleProduct(Long id, boolean value){
-        Optional<Product> product = this.productRepository.findById(id);
-
-        if (product.isPresent()){
-            product.get().setFinished(value);
-            this.productRepository.save(product.get());
-        }
-    }
-
     public void deleteById(Long id) {
         this.productRepository.deleteById(id);
     }

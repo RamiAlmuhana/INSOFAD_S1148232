@@ -1,16 +1,20 @@
-<div class="card col-9 align-items-center justify-content-center">
-  <div *ngIf="user" class="d-flex mt-5 mb-5 align-items-center justify-content-center">
-    <div class="col-6">
-      <img
-        src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
-        class="img-fluid" style="width: 20vw">
-    </div>
-    <div class="col-6 justify-content-end">
-      <p>Name: {{ user.name }}</p>
-      <p>TussenVoegsel: {{ user.infix }}</p>
-      <p>Achternaam: {{ user.lastName }}</p>
-      <p>Email: {{ user.email }}</p>
-      <button class="btn btn-primary" [routerLink]="['/profile-update']">Wijzigen</button>
+<div class="container">
+  <div class="card col-lg-8 col-md-10 col-12 mx-auto mt-5">
+    <div *ngIf="user" class="card-body d-flex flex-wrap align-items-center justify-content-center">
+      <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+        <img src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+             class="img-fluid rounded-circle" alt="Profile Picture">
+      </div>
+      <div class="col-lg-8 col-md-6 col-sm-12">
+        <div class="mb-3">
+          <h5 class="card-title">Profile Information</h5>
+        </div>
+        <p class="mb-1">Name: {{ user.name }}</p>
+        <p class="mb-1">Infix: {{ user.infix }}</p>
+        <p class="mb-1">Last Name: {{ user.lastName }}</p>
+        <p class="mb-1">Email: {{ user.email }}</p>
+        <button class="btn btn-primary mt-3" [routerLink]="['/profile-update']">Update</button>
+      </div>
     </div>
   </div>
 </div>

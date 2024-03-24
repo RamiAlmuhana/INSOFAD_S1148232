@@ -14,6 +14,6 @@ export class PaymentSuccessfulComponent {
   }
 
   backToHome() {
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('order-history');
   }
 }

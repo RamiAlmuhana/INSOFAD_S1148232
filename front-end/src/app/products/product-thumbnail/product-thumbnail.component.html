@@ -1,22 +1,23 @@
-<div class="d-flex">
-
-  <div class="col-md-4">
-    <img src="{{ product.imgURL }}" class="img-fluid rounded-start img-responsive rounded-end"
-         style="max-height: 150px;" alt="...">
-  </div>
-  <div class="p-2 w-100">
-    <h5>{{ product.name }}</h5>
-    <p>{{ product.price | currency }}</p>
-    <p>
-      <small>{{ product.description }}</small>
-    </p>
-  </div>
-  <div class="p-2 flex-shrink-1">
-    <a [routerLinkActive]="['active']" routerLink="/products/{{product.id}}" class="btn btn-secondary">
-      Show detail</a>
-    <button (click)="buyProduct(product)" class="btn btn-primary float-right">
-      Buy
-    </button>
+<div class="container-fluid bg-light py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 col-lg-3 mb-4 mb-md-0">
+        <img width="500" src="{{ product.imgURL }}" class="img-fluid rounded-start" style="max-width: 100%;" alt="...">
+      </div>
+      <div class="col-md-8 col-lg-6">
+        <h5>{{ product.name }}</h5>
+        <p>{{ product.description }}</p>
+        <p>{{ product.price | currency: 'EUR' }}</p>
+      </div>
+      <div class="col-md-12 col-lg-3 d-flex align-items-center justify-content-end">
+        <a [routerLinkActive]="['active']" routerLink="/products/{{product.id}}" class="btn btn-primary me-2">
+          Details
+        </a>
+        <button (click)="buyProduct(product)" class="btn btn-primary">
+          Buy
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 <hr>

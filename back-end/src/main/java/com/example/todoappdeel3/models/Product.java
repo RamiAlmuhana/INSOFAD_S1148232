@@ -15,7 +15,6 @@ public class Product {
     private Number price;
     private String description;
     private String imgURL;
-    private boolean isFinished = false;
 
      /*
     Maps the many-to-one relationship between product and category, jsonbackreference so that we do not get an
@@ -78,14 +77,6 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public void setFinished(boolean finished) {
-        isFinished = finished;
     }
 
     public String getImgURL() {

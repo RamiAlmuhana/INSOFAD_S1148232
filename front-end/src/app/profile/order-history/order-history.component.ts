@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./order-history.component.scss']
 })
 export class OrderHistoryComponent implements OnInit {
-  orders: Order[] = [];
+  orders: any[];
 
   constructor(private orderService: OrderService) { }
 
@@ -24,5 +24,13 @@ export class OrderHistoryComponent implements OnInit {
     this.orderService.getOrdersByCurrentUser().subscribe(orders => {
       this.orders = orders;
     });
+  }
+
+  calculateTotal(products: any[]): number {
+    let total = 0;
+    for (const product of products) {
+      total += product.price;
+    }
+    return total;
   }
 }
