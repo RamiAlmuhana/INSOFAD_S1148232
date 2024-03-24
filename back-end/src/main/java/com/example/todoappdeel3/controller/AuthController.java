@@ -158,10 +158,10 @@ public class AuthController {
     public ResponseEntity<Void> deleteUser(@PathVariable("email") String email) {
         CustomUser existingUser = userDAO.findByEmail(email);
         if (existingUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Gebruiker niet gevonden");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Gebruiker niet gevonden voor e-mail: " + email);
         }
-
         userDAO.delete(existingUser);
         return ResponseEntity.noContent().build();
     }
+
 }

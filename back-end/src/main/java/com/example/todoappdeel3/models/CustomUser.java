@@ -2,10 +2,7 @@ package com.example.todoappdeel3.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.Set;
 
@@ -22,10 +19,10 @@ public class CustomUser {
     private String password;
 
 
-    @OneToMany(mappedBy = "user")
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<PlacedOrder> placedOrders;
-
     public CustomUser() {
     }
 
