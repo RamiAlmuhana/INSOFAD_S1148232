@@ -37,11 +37,11 @@ public class ProductController {
         return ResponseEntity.ok(this.productDAO.getAllProductsByCategory(categoryId));
     }
 
-    @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody ProductDTO productDTO){
-        this.productDAO.createProduct(productDTO);
-        return ResponseEntity.ok("Created a product");
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createProduct(@RequestBody ProductDTO productDTO){
+//        this.productDAO.createProduct(productDTO);
+//        return ResponseEntity.ok("Created a product");
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO){

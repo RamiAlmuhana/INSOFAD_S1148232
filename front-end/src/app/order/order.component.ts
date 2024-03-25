@@ -24,12 +24,12 @@ export class OrderComponent implements OnInit {
   ngOnInit(): void {
     this.products_in_cart = this.cartService.allProductsInCart();
     this.bestelForm = this.fb.group({
-      Voornaam: ['', [Validators.required]],
-      Tussenvoegsel: [''],
-      Achternaam: ['', [Validators.required]],
-      Postcode: ['', [Validators.required]],
-      Huisnummer: ['', [Validators.required, Validators.maxLength(5)]],
-      Opmerkingen: ['']
+      name: ['', [Validators.required]],
+      infix: [''],
+      lastName: ['', [Validators.required]],
+      zipCode: ['', [Validators.required]],
+      houseNumber: ['', [Validators.required, Validators.maxLength(5)]],
+      notes: ['']
     });
   }
 
@@ -42,12 +42,12 @@ export class OrderComponent implements OnInit {
 
       this.order = {
         id: formData.id,
-        name: formData.Voornaam,
-        infix: formData.Tussenvoegsel,
-        last_name: formData.Achternaam,
-        zipcode: formData.Postcode,
-        houseNumber: formData.Huisnummer,
-        notes: formData.Opmerkingen,
+        name: formData.name,
+        infix: formData.infix,
+        last_name: formData.lastName,
+        zipcode: formData.zipCode,
+        houseNumber: formData.houseNumber,
+        notes: formData.notes,
         orderDate: formData.orderDatum,
         products: this.products_in_cart
       };

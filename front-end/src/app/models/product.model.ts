@@ -5,5 +5,8 @@ export class Product {
   public price: number;
   public imgURL: string;
   public amount: number;
+  public specifications: string;
+  public publisher: string;
+  public releaseDate: string;
   // public category: Category;
 }

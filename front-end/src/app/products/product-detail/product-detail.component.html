@@ -2,16 +2,29 @@
   <div class="container px-4 px-lg-5 my-5">
     <div class="row gx-4 gx-lg-5 align-items-center">
       <div class="col-md-6 mb-5 mb-md-0">
-        <div class="product-image-container bg-white p-4">
+        <div class="product-image-container bg-white p-4 shadow-sm rounded">
           <img class="card-img-top img-fluid" src="{{ product.imgURL }}" alt="Product Image"/>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="product-details-container bg-white p-4">
-          <h1 class="display-4 fw-bold">{{ product.name }}</h1>
-          <p class="lead">{{ product.description }}</p>
-          <p class="lead"><span>{{ product.price | currency: 'EUR' }}</span></p>
-          <button (click)="onBuyProduct(product)" class="btn btn-primary show-detail-btn">Buy Now</button>
+        <div class="product-details-container bg-white p-4 shadow-sm rounded">
+          <h1 class="display-4 fw-bold mb-4">{{ product.name }}</h1>
+          <p class="fw-bold mb-2 lead">Description:</p>
+          <p class="lead mb-4">{{ product.description }}</p>
+          <p class="lead mb-4"><span class="fw-bold">Price:</span> {{ product.price | currency: 'EUR' }}</p>
+          <div class="product-info mb-4">
+            <p class="fw-bold mb-2">Release Date:</p>
+            <p>{{ product.releaseDate }}</p>
+          </div>
+          <div class="product-info mb-4">
+            <p class="fw-bold mb-2">Specifications:</p>
+            <p>{{ product.specifications }}</p>
+          </div>
+          <div class="product-info mb-4">
+            <p class="fw-bold mb-2">Publisher:</p>
+            <p>{{ product.publisher }}</p>
+          </div>
+          <button (click)="onBuyProduct(product)" class="btn btn-primary">Buy Now</button>
         </div>
       </div>
     </div>

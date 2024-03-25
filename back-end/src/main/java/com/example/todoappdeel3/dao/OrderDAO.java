@@ -46,11 +46,9 @@ public class OrderDAO {
         CustomUser user = userRepository.findByEmail(userEmail);
         order.setUser(user);
 
-        // Bereken het totaal aantal producten (bestaande logica)
         int totalProducts = order.getProducts().size();
         order.setTotalProducts(totalProducts);
 
-        // Stel de besteldatum in op de huidige datum en tijd
         order.setOrderDate(LocalDateTime.now());
 
         orderRepository.save(order);
@@ -67,7 +65,7 @@ public class OrderDAO {
                     HttpStatus.NOT_FOUND, "No products found with that category id"
             );
         }
-        return orderList.get(); // return the list of orders
+        return orderList.get();
     }
 
 

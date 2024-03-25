@@ -12,9 +12,14 @@ public class Product {
     @GeneratedValue
     private long id;
     private String name;
-    private Number price;
+    @Column(length = 500)
     private String description;
+    private Number price;
     private String imgURL;
+    @Column(length = 500)
+    private String specifications;
+    private String releaseDate;
+    private String publisher;
 
      /*
     Maps the many-to-one relationship between product and category, jsonbackreference so that we do not get an
@@ -33,23 +38,20 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, Number price, String imgURL, Category category) {
+    public Product(String name, String description, Number price, String imgURL, Category category, String specifications, String releaseDate, String publisher) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.category = category;
         this.imgURL = imgURL;
+        this.specifications = specifications;
+        this.releaseDate = releaseDate;
+        this.publisher = publisher;
+        this.category = category;
     }
 
     //getters and setters are needed to map all the properties to the database by JPA, could
     //also be solved by making the properties public but gives less control over the properties.
-    public Category getCategory() {
-        return category;
-    }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 
     public long getId() {
         return id;
@@ -67,9 +69,6 @@ public class Product {
         this.name = name;
     }
 
-    public Number getPrice() { return price; }
-
-    public void setPrice(Number price) { this.price = price; }
 
     public String getDescription() {
         return description;
@@ -79,11 +78,52 @@ public class Product {
         this.description = description;
     }
 
+    public Number getPrice() {
+        return price;
+    }
+
+    public void setPrice(Number price) {
+        this.price = price;
+    }
+
     public String getImgURL() {
         return imgURL;
     }
 
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
+    }
+
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(String specifications) {
+        this.specifications = specifications;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 }
