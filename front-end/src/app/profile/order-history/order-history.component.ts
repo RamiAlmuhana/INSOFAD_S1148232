@@ -17,10 +17,10 @@ export class OrderHistoryComponent implements OnInit {
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
-    this.loadOrders();
+    this.loadOrdersIn();
   }
 
-  loadOrders() {
+  loadOrdersIn() {
     this.orderService.getOrdersByCurrentUser().subscribe(orders => {
       this.orders = orders;
     });

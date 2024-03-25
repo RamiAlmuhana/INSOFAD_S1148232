@@ -1,22 +1,38 @@
-<div class="orders-container" *ngIf="orders && orders.length > 0; else noOrders">
-  <div class="order" *ngFor="let order of orders">
-    <p class="order-info">Order ID: {{order.id}}</p>
-    <p class="order-info">Order Date: {{order.orderDate | date: 'medium'}}</p>
-    <ul class="products-list">
-      <li class="product" *ngFor="let product of order.products">
-        <div class="product-details">
-          <p class="product-name">Product Name: {{product.name}}</p>
-          <p class="product-price">Price: {{product.price | currency: 'EUR'}}</p>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="orders-container" *ngIf="orders && orders.length > 0; else noOrders">
+        <div class="order" *ngFor="let order of orders">
+          <div class="order-details">
+            <p class="order-info"><span class="fw-bold">Order ID:</span> {{order.id}}</p>
+            <p class="order-info"><span class="fw-bold">Order Date:</span> {{order.orderDate | date: 'medium'}}</p>
+            <div class="customer-info">
+              <h5><span class="fw-bold">Customer Information</span></h5>
+              <p><span class="fw-bold">Name:</span> {{order.name}} {{order.infix}} {{order.last_name}}</p>
+              <p><span class="fw-bold">Address:</span> {{order.houseNumber}}, {{order.zipcode}}</p>
+              <p><span class="fw-bold">Notes:</span> {{order.notes}}</p>
+            </div>
+            <ul class="products-list">
+              <li class="product" *ngFor="let product of order.products">
+                <div class="product-details">
+                  <p class="product-name"><span class="fw-bold">Product Name:</span> {{product.name}}</p>
+                  <p class="product-price"><span class="fw-bold">Price:</span> {{product.price | currency: 'EUR'}}</p>
+                </div>
+                <div class="product-image">
+                  <img src="{{product.imgURL}}" alt="{{product.name}}">
+                </div>
+              </li>
+            </ul>
+            <p class="order-total"><span class="fw-bold">Total:</span> {{ calculateTotal(order.products) | currency: 'EUR' }}</p>
+          </div>
         </div>
-        <div class="product-image">
-          <img src="{{product.imgURL}}" alt="{{product.name}}">
+      </div>
+
+      <ng-template #noOrders>
+        <div class="no-orders-message">
+          <p>Geen bestellingen gevonden.</p>
         </div>
-      </li>
-    </ul>
-    <p class="order-total">Total: {{ calculateTotal(order.products) | currency: 'EUR' }}</p>
+      </ng-template>
+    </div>
   </div>
 </div>
-
-<ng-template #noOrders>
-  <p class="no-orders-message">Geen bestellingen gevonden.</p>
-</ng-template>

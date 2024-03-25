@@ -13,12 +13,4 @@ import {RouterLink} from "@angular/router";
 })
 export class HomeComponent {
 
-  @Input() public product!: Product;
-  @Output() public onBuyProduct: EventEmitter<Product> = new EventEmitter<Product>();
-  public products: Product[] = new Array<Product>();
-  public loadingProducts: boolean = true;
-
-  public buyProduct(product: Product) {
-    this.onBuyProduct.emit(product);
-  }
 }
