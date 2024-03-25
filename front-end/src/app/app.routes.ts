@@ -9,7 +9,7 @@ import {ProductDetailComponent} from './products/product-detail/product-detail.c
 import {ProfileComponent} from "./profile/profile.component";
 import {ProfileUpdateComponent} from "./profile/profile-update/profile-update.component";
 import {OrderComponent} from "./order/order.component";
-import {PaymentSuccessfulComponent} from "./payment-successful/payment-successful.component";
+import {PaymentSuccessfulComponent} from "./order/payment-successful/payment-successful.component";
 import { OrderHistoryComponent } from './profile/order-history/order-history.component';
 
 
