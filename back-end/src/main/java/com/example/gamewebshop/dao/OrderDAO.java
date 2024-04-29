@@ -2,6 +2,7 @@ package com.example.gamewebshop.dao;
 
 import com.example.gamewebshop.models.CustomUser;
 import com.example.gamewebshop.models.PlacedOrder;
+import com.example.gamewebshop.models.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -37,18 +38,23 @@ public class OrderDAO {
     }
 
 
-    @Transactional
     public void saveOrderWithProducts(PlacedOrder order, String userEmail) {
         CustomUser user = userRepository.findByEmail(userEmail);
         order.setUser(user);
 
-        int totalProducts = order.getProducts().size();
-        order.setTotalProducts(totalProducts);
+        double totalPrice = 0.0; // Initialiseren van de totale prijs
+
+        for (Product product : order.getProducts()) {
+            totalPrice += product.getPrice().doubleValue(); // Optellen van de prijs van elk product
+        }
+
+        order.setTotalPrice(totalPrice); // Instellen van de totale prijs
 
         order.setOrderDate(LocalDateTime.now());
 
         orderRepository.save(order);
     }
+
 
 
 

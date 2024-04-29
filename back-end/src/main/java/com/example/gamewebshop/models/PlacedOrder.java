@@ -29,6 +29,8 @@ public class PlacedOrder {
     private int totalProducts;
     @Column(nullable = true)
     private LocalDateTime orderDate;
+    @Column(nullable = true)
+    private double totalPrice;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonBackReference
     private CustomUser user;
@@ -142,5 +144,12 @@ public class PlacedOrder {
         this.products = products;
     }
 
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
 }
