@@ -67,6 +67,7 @@ public class OrderController {
     public ResponseEntity<String> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
         String userEmail = principal.getName();
         double totalPrice = calculateTotalPrice(placedOrder); // Bereken de totale prijs van de bestelling
+        System.out.println("Total price before discount: " + totalPrice); // Print de totale prijs voordat de korting wordt toegepast
 
         if (promoCode != null && promoCodeService.isPromoCodeValid(promoCode)) {
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
@@ -76,14 +77,15 @@ public class OrderController {
                     // Controleer of de promocode geldig is en nog niet verlopen is
                     double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
                     totalPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
+                    System.out.println("Discount applied: " + discount); // Print de toegepaste korting
+                    System.out.println("Total price after discount: " + totalPrice); // Print de totale prijs na het toepassen van de korting
                     code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verminder het aantal resterende keren dat de promocode kan worden gebruikt
-                    promoCodeRepository.save(code); // Sla de aangepaste promocode op in de database
                 }
             }
         }
 
-
         placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
+        System.out.println("Final total price: " + placedOrder.getTotalPrice()); // Print de uiteindelijke totale prijs van de bestelling
 
         this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
         return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
@@ -104,7 +106,7 @@ public class OrderController {
         if (promoCode.getType() == PromoCode.PromoCodeType.FIXED_AMOUNT) {
             discount = promoCode.getDiscount();
         } else if (promoCode.getType() == PromoCode.PromoCodeType.PERCENTAGE) {
-            discount = totalPrice * (promoCode.getDiscount() / 100.0);
+            discount = totalPrice * promoCode.getDiscount();
         }
         return discount;
     }
