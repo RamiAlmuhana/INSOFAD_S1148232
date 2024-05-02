@@ -1,6 +1,7 @@
 package com.example.gamewebshop.controller;
 
 import com.example.gamewebshop.dao.OrderDAO;
+import com.example.gamewebshop.dao.PromoCodeRepository;
 import com.example.gamewebshop.dao.UserRepository;
 import com.example.gamewebshop.models.CustomUser;
 import com.example.gamewebshop.models.PlacedOrder;
@@ -23,11 +24,13 @@ public class OrderController {
     private final OrderDAO orderDAO;
     private final UserRepository userRepository;
     private final PromoCodeService promoCodeService;
+    private final PromoCodeRepository promoCodeRepository;
 
-    public OrderController(OrderDAO orderDAO, UserRepository userRepository, PromoCodeService promoCodeService) {
+    public OrderController(OrderDAO orderDAO, UserRepository userRepository, PromoCodeService promoCodeService, PromoCodeRepository promoCodeRepository) {
         this.orderDAO = orderDAO;
         this.userRepository = userRepository;
         this.promoCodeService = promoCodeService;
+        this.promoCodeRepository = promoCodeRepository;
     }
 
     @GetMapping
@@ -74,15 +77,18 @@ public class OrderController {
                     double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
                     totalPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
                     code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verminder het aantal resterende keren dat de promocode kan worden gebruikt
+                    promoCodeRepository.save(code); // Sla de aangepaste promocode op in de database
                 }
             }
         }
+
 
         placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
 
         this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
         return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
     }
+
 
 
     private double calculateTotalPrice(PlacedOrder placedOrder) {
