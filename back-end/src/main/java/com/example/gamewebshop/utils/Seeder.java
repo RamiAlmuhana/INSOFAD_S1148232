@@ -1,16 +1,16 @@
 package com.example.gamewebshop.utils;
 
-import com.example.gamewebshop.dao.OrderDAO;
-import com.example.gamewebshop.dao.ProductDAO;
-import com.example.gamewebshop.dao.ProductRepository;
-import com.example.gamewebshop.dao.UserRepository;
+import com.example.gamewebshop.dao.*;
 import com.example.gamewebshop.models.Category;
 import com.example.gamewebshop.models.CustomUser;
 import com.example.gamewebshop.models.Product;
+import com.example.gamewebshop.models.PromoCode;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class Seeder {
@@ -18,19 +18,22 @@ public class Seeder {
     private UserRepository userRepository;
     private OrderDAO orderDAO;
     private ProductRepository productRepository;
+    private final PromoCodeRepository promoCodeRepository;
 
 
-    public Seeder(ProductDAO productDAO, UserRepository userRepository, OrderDAO orderDAO, ProductRepository productRepository) {
+    public Seeder(ProductDAO productDAO, UserRepository userRepository, OrderDAO orderDAO, ProductRepository productRepository, PromoCodeRepository promoCodeRepository) {
         this.productDAO = productDAO;
         this.userRepository = userRepository;
         this.orderDAO = orderDAO;
         this.productRepository = productRepository;
+        this.promoCodeRepository = promoCodeRepository;
     }
 
     @EventListener
     public void seed(ContextRefreshedEvent event){
         this.seedProducts();
         this.seedUser();
+        seedPromoCodes();
     }
 
     private void seedProducts(){
@@ -235,5 +238,15 @@ public class Seeder {
         customUser.setEmail("test@mail.com");
         customUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
         userRepository.save(customUser);
+    }
+
+    private void seedPromoCodes() {
+        PromoCode promoCode1 = new PromoCode("SUMMER2024", 0.15, LocalDateTime.of(2024, 8, 31, 23, 59, 59), 100, PromoCode.PromoCodeType.PERCENTAGE);
+        PromoCode promoCode2 = new PromoCode("GAMER2024", 0.10, LocalDateTime.of(2024, 12, 31, 23, 59, 59), 50, PromoCode.PromoCodeType.PERCENTAGE);
+        PromoCode promoCode3 = new PromoCode("GIFT2024", 0.20, LocalDateTime.of(2024, 11, 15, 23, 59, 59), 200, PromoCode.PromoCodeType.PERCENTAGE);
+
+        promoCodeRepository.save(promoCode1);
+        promoCodeRepository.save(promoCode2);
+        promoCodeRepository.save(promoCode3);
     }
 }
