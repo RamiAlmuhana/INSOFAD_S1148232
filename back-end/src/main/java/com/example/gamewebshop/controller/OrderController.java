@@ -84,12 +84,18 @@ public class OrderController {
             }
         }
 
+        // Controleer of de totale prijs negatief wordt
+        if (totalPrice < 0) {
+            totalPrice = 0; // Zet de totale prijs op 0
+        }
+
         placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
         System.out.println("Final total price: " + placedOrder.getTotalPrice()); // Print de uiteindelijke totale prijs van de bestelling
 
         this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
         return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
     }
+
 
 
 

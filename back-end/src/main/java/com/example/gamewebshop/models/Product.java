@@ -11,7 +11,7 @@ public class Product {
     private String name;
     @Column(length = 500)
     private String description;
-    private Number price;
+    private Double price;
     private String imgURL;
     @Column(length = 500)
     private String specifications;
@@ -35,7 +35,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, Number price, String imgURL, Category category, String specifications, String releaseDate, String publisher) {
+    public Product(String name, String description, Double price, String imgURL, Category category, String specifications, String releaseDate, String publisher) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -75,13 +75,14 @@ public class Product {
         this.description = description;
     }
 
-    public Number getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Number price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
+
 
     public String getImgURL() {
         return imgURL;

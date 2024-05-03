@@ -43,20 +43,23 @@ public class OrderDAO {
         CustomUser user = userRepository.findByEmail(userEmail);
         order.setUser(user);
 
-        double totalPrice = 0.0; // Initialiseren van de totale prijs
+        // Totale prijs al berekend buiten de loop
+        // Dus we gebruiken gewoon de totale prijs die al is ingesteld
+        System.out.println("Total price before setting: " + order.getTotalPrice()); // Controleer de totale prijs
+
         int totalProducts = order.getProducts().size(); // Het aantal producten in de bestelling
-
-        for (Product product : order.getProducts()) {
-            totalPrice += product.getPrice().doubleValue(); // Optellen van de prijs van elk product
-        }
-
-        order.setTotalPrice(totalPrice); // Instellen van de totale prijs
-        order.setTotalProducts(totalProducts); // Instellen van het totale aantal producten
+        System.out.println("Total products: " + totalProducts); // Controleer het totale aantal producten
 
         order.setOrderDate(LocalDateTime.now());
 
-        orderRepository.save(order); // Opslaan van de bestelling in de database, inclusief de bijgewerkte totale prijs
+        try {
+            orderRepository.save(order); // Opslaan van de bestelling in de database
+            System.out.println("Order saved successfully.");
+        } catch (Exception e) {
+            System.out.println("Error saving order: " + e.getMessage());
+        }
     }
+
 
 
 
