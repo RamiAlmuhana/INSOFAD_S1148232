@@ -69,19 +69,30 @@ public class OrderController {
         double totalPrice = calculateTotalPrice(placedOrder); // Bereken de totale prijs van de bestelling
         System.out.println("Total price before discount: " + totalPrice); // Print de totale prijs voordat de korting wordt toegepast
 
-        if (promoCode != null && promoCodeService.isPromoCodeValid(promoCode)) {
-            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
-            if (promoCodeOptional.isPresent()) {
-                PromoCode code = promoCodeOptional.get();
-                if (code.getExpiryDate().isAfter(LocalDateTime.now()) && code.getMaxUsageCount() > 0) {
-                    // Controleer of de promocode geldig is en nog niet verlopen is
-                    double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
-                    totalPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
-                    System.out.println("Discount applied: " + discount); // Print de toegepaste korting
-                    System.out.println("Total price after discount: " + totalPrice); // Print de totale prijs na het toepassen van de korting
-                    code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verminder het aantal resterende keren dat de promocode kan worden gebruikt
+        try {
+            if (promoCode != null) {
+                // Plaats de isPromoCodeValid methode in de try-blok
+                if (promoCodeService.isPromoCodeValid(promoCode)) {
+                    Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
+                    if (promoCodeOptional.isPresent()) {
+                        PromoCode code = promoCodeOptional.get();
+                        if (code.getExpiryDate().isAfter(LocalDateTime.now()) && code.getMaxUsageCount() > 0) {
+                            // Controleer of de promocode geldig is en nog niet verlopen is en nog resterende gebruiksrechten heeft
+                            double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
+                            totalPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
+                            System.out.println("Discount applied: " + discount); // Print de toegepaste korting
+                            System.out.println("Total price after discount: " + totalPrice); // Print de totale prijs na het toepassen van de korting
+                            code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verminder het aantal resterende keren dat de promocode kan worden gebruikt
+                        }
+                    }
+                } else {
+                    // Als de promocode ongeldig is, retourneer een ResponseEntity om aan te geven dat de promocode ongeldig is
+                    return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
                 }
             }
+        } catch (Exception e) {
+            // Vang de exception op als er een fout optreedt bij het verwerken van de promocode
+            return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
         }
 
         // Controleer of de totale prijs negatief wordt
@@ -95,6 +106,8 @@ public class OrderController {
         this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
         return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
     }
+
+
 
 
 
