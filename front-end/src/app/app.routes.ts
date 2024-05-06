@@ -14,7 +14,7 @@ import { OrderHistoryComponent } from './profile/order-history/order-history.com
 import {AdminDashboardComponent} from "./admin-dashboard/admin-dashboard.component";
 import {PromoCodeAddComponent} from "./admin-dashboard/admin-promocode/promocode-add/promocode-add.component";
 import {PromocodeUpdateComponent} from "./admin-dashboard/admin-promocode/promocode-update/promocode-update.component";
-import {PromocodeListComponent} from "./admin-dashboard/admin-promocode/promocode-list/promocode-list.component";
+import {AdminPromocodeComponent} from "./admin-dashboard/admin-promocode/admin-promocode.component";
 
 
 export const routes: Routes = [
@@ -32,9 +32,9 @@ export const routes: Routes = [
   {path: 'paymentsuccessful', component: PaymentSuccessfulComponent, canActivate: [authGuard]},
   {path: 'orders', component: OrderComponent, canActivate: [authGuard]},
   {path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard]},
-  {path: 'promocode-add', component: PromoCodeAddComponent, canActivate: [authGuard]},
-  {path: 'promocode-update/:id', component: PromocodeUpdateComponent, canActivate: [authGuard]},
-  {path: 'promocode-list', component: PromocodeListComponent, canActivate: [authGuard]},
+  {path: 'admin/promocode-list/promocode-add', component: PromoCodeAddComponent, canActivate: [authGuard]},
+  {path: 'admin/promocode-list/promocode-update/:id', component: PromocodeUpdateComponent, canActivate: [authGuard]},
+  {path: 'admin/promocode-list', component: AdminPromocodeComponent, canActivate: [authGuard]},
 ];
 
 

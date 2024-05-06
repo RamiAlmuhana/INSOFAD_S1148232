@@ -1,12 +1,27 @@
-import { Component } from '@angular/core';
 
+import { Component, OnInit } from '@angular/core';
+import {CurrencyPipe, DatePipe, NgForOf, NgIf} from "@angular/common";
+import {Router} from "@angular/router";
 @Component({
-  selector: 'app-admin-dashboard',
+  selector: 'app-order-history',
+  templateUrl: 'admin-dashboard.component.html',
   standalone: true,
-  imports: [],
-  templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss'
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    NgIf,
+    NgForOf
+  ],
+  styleUrls: ['admin-dashboard.component.scss']
 })
-export class AdminDashboardComponent {
-
+export class AdminDashboardComponent implements OnInit {
+  constructor(private router: Router) { }
+  ngOnInit(): void {
+  }
+  navigateToAllPromo() {
+    this.router.navigate(['admin/promocode-list']);
+  }
+  // navigateToProductOverview() {
+  //   this.router.navigate(['dashboard/product-overview']);
+  // }
 }
