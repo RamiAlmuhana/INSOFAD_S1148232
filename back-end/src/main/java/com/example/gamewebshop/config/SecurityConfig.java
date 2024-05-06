@@ -39,6 +39,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/promocodes/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/promocodes/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/promocodes/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE,"/promocodes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/orders").permitAll()
                         .requestMatchers(HttpMethod.POST, "/orders").permitAll()
                         .requestMatchers(HttpMethod.GET, "/category").permitAll()

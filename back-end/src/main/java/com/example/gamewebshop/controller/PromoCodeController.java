@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/promocodes")
 public class PromoCodeController {
 
@@ -26,9 +27,9 @@ public class PromoCodeController {
 
     // Endpoint om een nieuwe promocode toe te voegen
     @PostMapping
-    public ResponseEntity<PromoCode> addPromoCode(@RequestBody PromoCode promoCode) {
+    public ResponseEntity<String> addPromoCode(@RequestBody PromoCode promoCode) {
         PromoCode newPromoCode = promoCodeService.addPromoCode(promoCode);
-        return ResponseEntity.ok(newPromoCode);
+        return ResponseEntity.ok("New promocode created!");
     }
 
     // Endpoint om een bestaande promocode bij te werken
@@ -37,4 +38,17 @@ public class PromoCodeController {
         PromoCode updatedPromoCode = promoCodeService.updatePromoCode(id, promoCodeDetails);
         return ResponseEntity.ok(updatedPromoCode);
     }
+
+    // Endpoint om een bestaande promocode te verwijderen
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePromoCode(@PathVariable Long id) {
+        // Controleer of de promo-code bestaat
+        if (!promoCodeService.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        // Verwijder de promo-code
+        promoCodeService.deletePromoCode(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

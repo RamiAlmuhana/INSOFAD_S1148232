@@ -39,6 +39,16 @@ public class PromoCodeService {
         }
     }
 
+    // Verwijder een bestaande promocode
+    public void deletePromoCode(Long id) {
+        promoCodeRepository.deleteById(id);
+    }
+
+    // Controleer of een promocode bestaat op basis van het ID
+    public boolean existsById(Long id) {
+        return promoCodeRepository.existsById(id);
+    }
+
 
     public PromoCodeService(PromoCodeRepository promoCodeRepository) {
         this.promoCodeRepository = promoCodeRepository;
