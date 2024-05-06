@@ -27,9 +27,9 @@ public class PromoCodeController {
 
     // Endpoint om een nieuwe promocode toe te voegen
     @PostMapping
-    public ResponseEntity<String> addPromoCode(@RequestBody PromoCode promoCode) {
+    public ResponseEntity<PromoCode> addPromoCode(@RequestBody PromoCode promoCode) {
         PromoCode newPromoCode = promoCodeService.addPromoCode(promoCode);
-        return ResponseEntity.ok("New promocode created!");
+        return ResponseEntity.ok(newPromoCode);
     }
 
     // Endpoint om een bestaande promocode bij te werken
