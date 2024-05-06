@@ -1,5 +1,5 @@
 <form [formGroup]="promoCodeForm" (ngSubmit)="onSubmit()" class="p-4 shadow-sm bg-light rounded">
-  <h2 class="text-center mb-4">Create Promo Code</h2>
+  <h2 class="text-center mb-4">Update Promo Code</h2>
   <div class="mb-3">
     <label for="code" class="form-label">Promo Code:</label>
     <input type="text" class="form-control" id="code" formControlName="code" placeholder="Enter promo code">
@@ -26,5 +26,5 @@
       <option value="PERCENTAGE">Percentage</option>
     </select>
   </div>
-  <button type="submit" class="btn btn-primary w-100">Create Promo Code</button>
+  <button type="submit" class="btn btn-primary w-100">Edit Promo Code</button>
 </form>

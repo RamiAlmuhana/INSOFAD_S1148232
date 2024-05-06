@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -49,6 +50,18 @@ public class PromoCodeController {
         // Verwijder de promo-code
         promoCodeService.deletePromoCode(id);
         return ResponseEntity.ok().build();
+    }
+
+
+    // Endpoint om een promocode op te halen op basis van ID
+    @GetMapping("/{id}")
+    public ResponseEntity<PromoCode> getPromoCodeById(@PathVariable Long id) {
+        Optional<PromoCode> promoCode = promoCodeService.getPromoCodeById(id);
+        if (promoCode.isPresent()) {
+            return ResponseEntity.ok(promoCode.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

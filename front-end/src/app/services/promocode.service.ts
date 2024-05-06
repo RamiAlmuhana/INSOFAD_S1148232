@@ -1,5 +1,3 @@
-// promo-code.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -18,12 +16,16 @@ export class PromoCodeService {
     return this.http.get<PromoCode[]>(this.baseUrl);
   }
 
+  getPromoCode(id: number): Observable<PromoCode> {
+    return this.http.get<PromoCode>(`${this.baseUrl}/${id}`);
+  }
+
   createPromoCode(promoCode: PromoCode): Observable<any> {
     return this.http.post(this.baseUrl, promoCode);
   }
 
-  updatePromoCode(id: number, promoCode: PromoCode): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, promoCode);
+  updatePromoCode(id: number, promoCode: PromoCode): Observable<PromoCode> {
+    return this.http.put<PromoCode>(`${this.baseUrl}/${id}`, promoCode);
   }
 
   deletePromoCode(id: number): Observable<any> {
