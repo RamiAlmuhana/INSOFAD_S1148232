@@ -12,6 +12,7 @@ import {OrderComponent} from "./order/order.component";
 import {PaymentSuccessfulComponent} from "./order/payment-successful/payment-successful.component";
 import { OrderHistoryComponent } from './profile/order-history/order-history.component';
 import {AdminDashboardComponent} from "./admin-dashboard/admin-dashboard.component";
+import {PromoCodeAddComponent} from "./admin-dashboard/admin-promocode/promocode-add/promocode-add.component";
 
 
 export const routes: Routes = [
@@ -29,6 +30,7 @@ export const routes: Routes = [
   {path: 'paymentsuccessful', component: PaymentSuccessfulComponent, canActivate: [authGuard]},
   {path: 'orders', component: OrderComponent, canActivate: [authGuard]},
   {path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard]},
+  {path: 'promocode-add', component: PromoCodeAddComponent, canActivate: [authGuard]},
 ];
 
 

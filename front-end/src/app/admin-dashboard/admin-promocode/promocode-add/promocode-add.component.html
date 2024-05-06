@@ -1,0 +1,26 @@
+<form [formGroup]="promoCodeForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="code">Promo Code:</label>
+    <input type="text" class="form-control" id="code" formControlName="code">
+  </div>
+  <div class="form-group">
+    <label for="discount">Discount:</label>
+    <input type="number" class="form-control" id="discount" formControlName="discount">
+  </div>
+  <div class="form-group">
+    <label for="expiryDate">Expiry Date:</label>
+    <input type="date" class="form-control" id="expiryDate" formControlName="expiryDate">
+  </div>
+  <div class="form-group">
+    <label for="maxUsageCount">Max Usage Count:</label>
+    <input type="number" class="form-control" id="maxUsageCount" formControlName="maxUsageCount">
+  </div>
+  <div class="form-group">
+    <label for="type">Type:</label>
+    <select class="form-control" id="type" formControlName="type">
+      <option value="FIXED_AMOUNT">Fixed Amount</option>
+      <option value="PERCENTAGE">Percentage</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Create Promo Code</button>
+</form>
