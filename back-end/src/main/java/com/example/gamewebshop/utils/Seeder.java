@@ -33,6 +33,7 @@ public class Seeder {
     public void seed(ContextRefreshedEvent event){
         this.seedProducts();
         this.seedUser();
+        this.seedUser2();
         seedPromoCodes();
     }
 
@@ -237,6 +238,17 @@ public class Seeder {
         customUser.setLastName("Al-Muhana");
         customUser.setEmail("test@mail.com");
         customUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
+        customUser.setRole("user");
+        userRepository.save(customUser);
+    }
+    private void seedUser2(){
+        CustomUser customUser = new CustomUser();
+        customUser.setName("admin");
+        customUser.setInfix("");
+        customUser.setLastName("admin");
+        customUser.setEmail("admin@mail.com");
+        customUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
+        customUser.setRole("admin");
         userRepository.save(customUser);
     }
 

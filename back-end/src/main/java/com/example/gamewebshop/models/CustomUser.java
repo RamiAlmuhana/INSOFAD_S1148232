@@ -17,6 +17,9 @@ public class CustomUser {
     private String lastName;
     private String email;
     private String password;
+    @Column(name = "role")
+    private String role;
+
 
 
 
@@ -26,13 +29,15 @@ public class CustomUser {
     public CustomUser() {
     }
 
-    public CustomUser(String name, String infix, String lastName, String email, String password) {
+    public CustomUser(String name, String infix, String lastName, String email, String password, String role) {
         this.name = name;
         this.infix = infix;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
+
 
     public Set<PlacedOrder> getOrders() {
         return placedOrders;
@@ -89,6 +94,14 @@ public class CustomUser {
 
     public Long getId() {
         return id;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 

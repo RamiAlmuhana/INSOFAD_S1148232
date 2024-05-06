@@ -4,5 +4,5 @@ export class User {
   public infix: string;
   public lastName: string;
   public email: string;
-  //public token: string;
+  public role: string; // Voeg de rol toe
 }

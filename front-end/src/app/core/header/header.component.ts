@@ -8,13 +8,14 @@ import {User} from "../../models/user.model";
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
 
   public userIsLoggedIn: boolean = false;
   public isDropdownOpen: boolean = false;
   public amountOfProducts: number = 0;
+  public userRole: string = ''; // Voeg de rol van de gebruiker toe
 
   constructor(private authService: AuthService, private router: Router, private cartService: CartService) {
   }
@@ -23,8 +24,7 @@ export class HeaderComponent implements OnInit {
     this.checkLoginState();
     this.cartService.$productInCart.subscribe((products: Product[]) => {
       this.amountOfProducts = products.reduce((total, product) => total + product.amount, 0);
-
-    })
+    });
   }
 
   public onLogout(): void {
@@ -33,15 +33,20 @@ export class HeaderComponent implements OnInit {
   }
 
   public checkLoginState(): void {
-
     this.authService
       .$userIsLoggedIn
       .subscribe((loginState: boolean) => {
         this.userIsLoggedIn = loginState;
+        if (this.userIsLoggedIn) {
+          // Haal de rol van de ingelogde gebruiker op
+          this.authService.getCurrentUser().subscribe((user: User) => {
+            this.userRole = user.role;
+          });
+        }
       });
   }
 
-  toggleDropdown() {
+  public toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 

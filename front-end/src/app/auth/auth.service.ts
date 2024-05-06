@@ -1,9 +1,10 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {AuthResponse} from './auth-response.model';
-import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {BehaviorSubject, map, Observable, tap} from 'rxjs';
 import {AuthRequest} from './auth-request.model';
 import {TokenService} from './token.service';
+import {User} from "../models/user.model";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class AuthService {
 
   private _loginEndpoint: string = 'http://localhost:8080/api/auth/login';
   private _registerEndpoint: string = 'http://localhost:8080/api/auth/register';
+  private _currentUserEndpoint: string = 'http://localhost:8080/api/auth/user';
 
   public $userIsLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -48,4 +50,16 @@ export class AuthService {
     this.tokenService.removeToken();
     this.$userIsLoggedIn.next(false);
   }
+
+
+  public getCurrentUser(): Observable<User> {
+    return this.http.get<User>(this._currentUserEndpoint);
+  }
+
+  public getUserRole(): Observable<string> {
+    return this.getCurrentUser().pipe(
+      map(user => user.role)
+    );
+  }
+
 }

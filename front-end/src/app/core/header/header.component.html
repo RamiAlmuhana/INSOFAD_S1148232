@@ -27,6 +27,15 @@
             <a (click)="onLogout()" class="nav-link rounded-3">Logout</a>
           </li>
         </ng-container>
+
+        <!-- Speciale pagina alleen voor gebruikers met de rol "admin" -->
+        <ul class="navbar-nav ms-auto">
+          <ng-container *ngIf="userIsLoggedIn && userRole === 'admin'">
+            <li class="nav-item">
+              <a [routerLink]="['/admin']" class="nav-link rounded-3">Admin Page</a>
+            </li>
+          </ng-container>
+        </ul>
         <ng-template #guestLinks>
           <li class="nav-item">
             <a [routerLink]="['auth', 'login']" class="nav-link rounded-3">Login</a>

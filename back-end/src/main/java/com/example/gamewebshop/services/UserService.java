@@ -23,9 +23,20 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         CustomUser customUser = userDAO.findByEmail(email);
 
+        if (customUser == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+
+        // Voeg hier een controle op de gebruikersrol toe, bijvoorbeeld:
+        if (!customUser.getRole().equals("admin") && !customUser.getRole().equals("user")) {
+            throw new IllegalStateException("User has invalid role: " + customUser.getRole());
+        }
+
         return new User(
                 email,
                 customUser.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + customUser.getRole())));
     }
+
+
 }
