@@ -5,11 +5,13 @@ import {Product} from '../models/product.model';
 import {Router} from '@angular/router';
 import {AuthService} from "../auth/auth.service";
 import { HttpClient } from '@angular/common/http';
+import {environment} from "../../environments/environment";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CurrencyPipe, NgFor, NgIf],
+  imports: [CurrencyPipe, NgFor, NgIf, FormsModule],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
@@ -17,6 +19,8 @@ export class CartComponent implements OnInit {
   public products_in_cart: Product[];
   public userIsLoggedIn: boolean = false;
   public amountOfProducts: number = 0;
+  promoCode: string = '';
+  discount: number = 0;
 
 
   constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {
@@ -64,5 +68,17 @@ export class CartComponent implements OnInit {
       .subscribe((loginState: boolean) => {
         this.userIsLoggedIn = loginState;
       });
+  }
+
+
+  applyPromoCode() {
+    const url = `${environment.base_url}/promocodes/validate?code=${this.promoCode}`;
+    this.http.get<{discount: number}>(url).subscribe({
+      next: (response) => {
+        this.discount = response.discount;
+        this.cartService.applyDiscount(this.discount);
+      },
+      error: () => alert('Invalid or expired promo code!')
+    });
   }
 }

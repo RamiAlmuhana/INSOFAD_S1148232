@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -62,6 +63,15 @@ public class PromoCodeController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validatePromoCode(@RequestParam String code) {
+        Optional<PromoCode> promoCode = promoCodeService.getPromoCodeByCode(code);
+        if (promoCode.isPresent() && promoCodeService.isPromoCodeValid(code)) {
+            return ResponseEntity.ok(Map.of("discount", promoCode.get().getDiscount()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 }

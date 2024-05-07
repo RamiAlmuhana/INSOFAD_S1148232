@@ -18,6 +18,7 @@ export class OrderComponent implements OnInit {
   public bestelForm: FormGroup;
   public products_in_cart: Product[];
   public order: Order;
+  public totalPrice: number;
 
   constructor(private cartService: CartService, private router: Router, private fb: FormBuilder) {}
 
@@ -49,7 +50,8 @@ export class OrderComponent implements OnInit {
         houseNumber: formData.houseNumber,
         notes: formData.notes,
         orderDate: formData.orderDatum,
-        products: this.products_in_cart
+        products: this.products_in_cart,
+        totalPrice: this.totalPrice
       };
 
       this.cartService.addOrder(this.order).subscribe(

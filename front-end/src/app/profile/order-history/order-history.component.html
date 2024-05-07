@@ -23,7 +23,7 @@
                 </div>
               </li>
             </ul>
-            <p class="order-total"><span class="fw-bold">Total:</span> {{ calculateTotal(order.products) | currency: 'EUR' }}</p>
+            <p class="order-total"><span class="fw-bold">Total:</span> {{ order.totalPrice | currency: 'EUR' }}</p>
           </div>
         </div>
       </div>

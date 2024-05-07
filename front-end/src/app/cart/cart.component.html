@@ -27,6 +27,15 @@
           </div>
         </div>
 
+        <div class="col-md-12 mt-3">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Promo code" [(ngModel)]="promoCode" name="promoCode">
+            <button class="btn btn-outline-secondary" type="button" (click)="applyPromoCode()">Apply Promo Code</button>
+          </div>
+          <p *ngIf="discount > 0">Discount Applied: {{ discount | currency: 'EUR' }}</p>
+        </div>
+
+
         <div class="col-md-12 mt-5">
           <div class="d-flex justify-content-end">
             <p class="lead me-4">Total: {{ getTotalPrice() | currency: 'EUR' }}</p>

@@ -66,6 +66,15 @@ export class CartService {
   );
 }
 
+  applyDiscount(discount: number) {
+    this.productsInCart = this.productsInCart.map(product => {
+      const discountedPrice = product.price - (product.price * discount);
+      return {...product, price: discountedPrice >= 0 ? discountedPrice : 0};
+    });
+    this.saveProductsAndNotifyChange();
+  }
+
+
   // ------------ PRIVATE ------------------
 
   private saveProductsAndNotifyChange(): void {
