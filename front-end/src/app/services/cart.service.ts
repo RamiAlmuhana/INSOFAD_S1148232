@@ -14,6 +14,8 @@ const promoAppliedKey: string = "promoApplied";
 export class CartService {
   private productsInCart: Product[] = [];
   public $productInCart: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
+  public totalDiscount: number = 0;
+  public totalPriceWithDiscount: number = 0;
   private baseUrl: string = environment.base_url + "/orders";
 
   constructor(private http: HttpClient) {
@@ -61,27 +63,30 @@ export class CartService {
     );
   }
 
-  applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE') {
+  // Pas korting toe zonder de productprijzen te veranderen
+  public applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE') {
+    const total = this.calculateTotalPrice();
     if (discountType === 'FIXED_AMOUNT') {
-      this.productsInCart.forEach(product => {
-        const newPrice = product.price - discountValue;
-        product.price = newPrice > 0 ? newPrice : 0;
-      });
+      this.totalDiscount = discountValue;
     } else if (discountType === 'PERCENTAGE') {
-      this.productsInCart.forEach(product => {
-        const newPrice = product.price * (1 - discountValue / 100);
-        product.price = newPrice > 0 ? newPrice : 0;
-      });
+      this.totalDiscount = total * (discountValue / 100);
     }
-    localStorage.setItem(promoAppliedKey, 'true');  // Save promo code applied status
-    this.saveProductsAndNotifyChange();
+    this.totalPriceWithDiscount = total - this.totalDiscount;
+    localStorage.setItem('promoApplied', 'true');  // Bewaar de status van de promo-code
+    this.$productInCart.next(this.productsInCart.slice()); // Update de observable
   }
 
-  removeDiscount() {
-    // Laad de oorspronkelijke productgegevens opnieuw.
-    this.loadProductsFromLocalStorage();
-    localStorage.removeItem('promoApplied');  // Reset promo code applied status in local storage
-    this.$productInCart.next(this.productsInCart.slice()); // Update de observable om de wijzigingen weer te geven
+  // Verwijder de korting
+  public removeDiscount() {
+    this.totalDiscount = 0;
+    this.totalPriceWithDiscount = this.calculateTotalPrice();
+    localStorage.removeItem('promoApplied');
+    this.$productInCart.next(this.productsInCart.slice());
+  }
+
+  // Bereken de totale prijs zonder korting
+  public calculateTotalPrice(): number {
+    return this.productsInCart.reduce((total, product) => total + product.price * product.amount, 0);
   }
 
 

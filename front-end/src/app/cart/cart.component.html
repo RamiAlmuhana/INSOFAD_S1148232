@@ -43,6 +43,7 @@
         <div class="col-md-12 mt-5">
           <div class="d-flex justify-content-end">
             <p class="lead me-4">Total: {{ getTotalPrice() | currency: 'EUR' }}</p>
+            <p  *ngIf="promoApplied">Discounted Price: {{ getTotalPriceWithDiscount() | currency:'EUR' }}</p>
           </div>
         </div>
 

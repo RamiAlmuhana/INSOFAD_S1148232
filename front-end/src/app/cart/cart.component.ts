@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {CurrencyPipe, NgFor, NgIf} from '@angular/common';
-import {CartService} from '../services/cart.service';
-import {Product} from '../models/product.model';
-import {Router} from '@angular/router';
-import {AuthService} from "../auth/auth.service";
+import { Component, OnInit } from '@angular/core';
+import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { CartService } from '../services/cart.service';
+import { Product } from '../models/product.model';
+import { Router } from '@angular/router';
+import { AuthService } from "../auth/auth.service";
 import { HttpClient } from '@angular/common/http';
-import {environment} from "../../environments/environment";
-import {FormsModule} from "@angular/forms";
+import { environment } from "../../environments/environment";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-cart',
@@ -44,18 +44,21 @@ export class CartComponent implements OnInit {
   }
 
   public getTotalPrice(): number {
-    return this.products_in_cart.reduce((total, product) => total + product.price * product.amount, 0);
+    return this.cartService.calculateTotalPrice();
   }
 
-  onInvalidOrder(){
+  public getTotalPriceWithDiscount(): number {
+    return this.cartService.totalPriceWithDiscount;
+  }
+
+  onInvalidOrder() {
     return this.amountOfProducts === 0;
   }
 
   onOrder() {
-    if (!this.userIsLoggedIn){
+    if (!this.userIsLoggedIn) {
       this.router.navigateByUrl('/auth/login');
-    }
-    else {
+    } else {
       this.router.navigateByUrl('/orders');
     }
   }
