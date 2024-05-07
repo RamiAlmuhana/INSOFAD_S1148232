@@ -117,7 +117,7 @@ public class OrderController {
             discount = promoCode.getDiscount();
         } else if (promoCode.getType() == PromoCode.PromoCodeType.PERCENTAGE) {
             // If it's a percentage, calculate the discount based on the total price
-            discount = totalPrice * promoCode.getDiscount();
+            discount = totalPrice * (promoCode.getDiscount() / 100);
         }
         return discount;
     }

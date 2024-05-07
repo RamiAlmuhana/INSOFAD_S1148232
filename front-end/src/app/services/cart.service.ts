@@ -69,7 +69,7 @@ export class CartService {
       });
     } else if (discountType === 'PERCENTAGE') {
       this.productsInCart.forEach(product => {
-        const newPrice = product.price * (1 - discountValue);
+        const newPrice = product.price * (1 - discountValue / 100);
         product.price = newPrice > 0 ? newPrice : 0;
       });
     }
