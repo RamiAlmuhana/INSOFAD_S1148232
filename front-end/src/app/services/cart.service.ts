@@ -77,6 +77,14 @@ export class CartService {
     this.saveProductsAndNotifyChange();
   }
 
+  removeDiscount() {
+    // Laad de oorspronkelijke productgegevens opnieuw.
+    this.loadProductsFromLocalStorage();
+    localStorage.removeItem('promoApplied');  // Reset promo code applied status in local storage
+    this.$productInCart.next(this.productsInCart.slice()); // Update de observable om de wijzigingen weer te geven
+  }
+
+
   // ------------ PRIVATE ------------------
   private saveProductsAndNotifyChange(): void {
     this.saveProductsToLocalStorage(this.productsInCart.slice());

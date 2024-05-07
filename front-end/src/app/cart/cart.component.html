@@ -34,6 +34,10 @@
           </div>
           <p *ngIf="discount > 0">Discount Applied: {{ discount | currency: 'EUR' }}</p>
         </div>
+        <div class="col-md-12 mt-3" *ngIf="promoApplied">
+          <button class="btn btn-warning" (click)="removePromoCode()">Remove Promo Code</button>
+        </div>
+
 
 
         <div class="col-md-12 mt-5">
