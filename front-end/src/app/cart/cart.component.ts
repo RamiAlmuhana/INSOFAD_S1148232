@@ -13,7 +13,7 @@ import {FormsModule} from "@angular/forms";
   standalone: true,
   imports: [CurrencyPipe, NgFor, NgIf, FormsModule],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss'
+  styleUrls: ['./cart.component.scss']
 })
 export class CartComponent implements OnInit {
   public products_in_cart: Product[];
@@ -21,12 +21,9 @@ export class CartComponent implements OnInit {
   public amountOfProducts: number = 0;
   promoCode: string = '';
   discount: number = 0;
-  promoApplied: boolean = false;
+  promoApplied: boolean = this.checkPromoApplied();
 
-
-  constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {
-
-  }
+  constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {}
 
   ngOnInit() {
     this.products_in_cart = this.cartService.allProductsInCart();
@@ -34,12 +31,12 @@ export class CartComponent implements OnInit {
       this.products_in_cart = products;
       this.amountOfProducts = products.length;
       this.checkLoginState();
-
     });
   }
 
   public clearCart() {
     this.cartService.clearCart();
+    this.promoApplied = false;  // Reset promo code applied state
   }
 
   public removeProductFromCart(product_index: number) {
@@ -50,27 +47,23 @@ export class CartComponent implements OnInit {
     return this.products_in_cart.reduce((total, product) => total + product.price * product.amount, 0);
   }
 
-  onInvalidOrder(){
+  onInvalidOrder() {
     return this.amountOfProducts === 0;
   }
 
   onOrder() {
-    if (!this.userIsLoggedIn){
+    if (!this.userIsLoggedIn) {
       this.router.navigateByUrl('/auth/login');
-    }
-    else {
+    } else {
       this.router.navigateByUrl('/orders');
     }
   }
 
   public checkLoginState(): void {
-    this.authService
-      .$userIsLoggedIn
-      .subscribe((loginState: boolean) => {
-        this.userIsLoggedIn = loginState;
-      });
+    this.authService.$userIsLoggedIn.subscribe((loginState: boolean) => {
+      this.userIsLoggedIn = loginState;
+    });
   }
-
 
   applyPromoCode() {
     if (this.promoApplied) {
@@ -93,4 +86,7 @@ export class CartComponent implements OnInit {
     });
   }
 
+  private checkPromoApplied(): boolean {
+    return localStorage.getItem('promoApplied') === 'true';
+  }
 }

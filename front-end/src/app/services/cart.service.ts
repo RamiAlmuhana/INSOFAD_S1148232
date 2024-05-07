@@ -1,14 +1,12 @@
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 import { Product } from '../models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Form, FormGroup } from '@angular/forms';
 import { Order } from '../models/order.model';
 
-
 const localStorageKey: string = "products-in-cart";
+const promoAppliedKey: string = "promoApplied";
 
 @Injectable({
   providedIn: 'root'
@@ -24,14 +22,12 @@ export class CartService {
 
   public addProductToCart(productToAdd: Product) {
     let existingProductIndex: number = this.productsInCart.findIndex(product => product.name === productToAdd.name);
-
     if (existingProductIndex !== -1) {
       this.productsInCart[existingProductIndex].amount += 1;
     } else {
       productToAdd.amount = 1;
       this.productsInCart.push(productToAdd);
     }
-
     this.saveProductsAndNotifyChange();
   }
 
@@ -41,12 +37,13 @@ export class CartService {
     } else {
       this.productsInCart.splice(productIndex, 1);
     }
-
     this.saveProductsAndNotifyChange();
+    localStorage.removeItem(promoAppliedKey);
   }
 
   public clearCart() {
     this.productsInCart = [];
+    localStorage.removeItem(promoAppliedKey);  // Reset promo code status on cart clear
     this.saveProductsAndNotifyChange();
   }
 
@@ -54,17 +51,15 @@ export class CartService {
     return this.productsInCart.slice();
   }
 
-
   public addOrder(order: Order): Observable<Order> {
     console.log("Ontvangen order: " + order);
-
-   return this.http.post<Order>(this.baseUrl, order).pipe(
-    catchError(error => {
-      console.error('Error adding order:', error);
-      return throwError(error); // Rethrow the error to propagate it to the caller
-    })
-  );
-}
+    return this.http.post<Order>(this.baseUrl, order).pipe(
+      catchError(error => {
+        console.error('Error adding order:', error);
+        return throwError(error);
+      })
+    );
+  }
 
   applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE') {
     if (discountType === 'FIXED_AMOUNT') {
@@ -74,17 +69,15 @@ export class CartService {
       });
     } else if (discountType === 'PERCENTAGE') {
       this.productsInCart.forEach(product => {
-        const newPrice = product.price - (product.price * discountValue);
+        const newPrice = product.price * (1 - discountValue);
         product.price = newPrice > 0 ? newPrice : 0;
       });
     }
+    localStorage.setItem(promoAppliedKey, 'true');  // Save promo code applied status
     this.saveProductsAndNotifyChange();
   }
 
-
-
   // ------------ PRIVATE ------------------
-
   private saveProductsAndNotifyChange(): void {
     this.saveProductsToLocalStorage(this.productsInCart.slice());
     this.$productInCart.next(this.productsInCart.slice());
