@@ -69,9 +69,10 @@ public class PromoCodeController {
     public ResponseEntity<?> validatePromoCode(@RequestParam String code) {
         Optional<PromoCode> promoCode = promoCodeService.getPromoCodeByCode(code);
         if (promoCode.isPresent() && promoCodeService.isPromoCodeValid(code)) {
-            return ResponseEntity.ok(Map.of("discount", promoCode.get().getDiscount()));
+            return ResponseEntity.ok(Map.of("discount", promoCode.get().getDiscount(), "type", promoCode.get().getType().toString()));
         }
         return ResponseEntity.badRequest().build();
     }
+
 
 }

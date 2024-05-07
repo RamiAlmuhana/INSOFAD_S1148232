@@ -66,13 +66,21 @@ export class CartService {
   );
 }
 
-  applyDiscount(discount: number) {
-    this.productsInCart = this.productsInCart.map(product => {
-      const discountedPrice = product.price - (product.price * discount);
-      return {...product, price: discountedPrice >= 0 ? discountedPrice : 0};
-    });
+  applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE') {
+    if (discountType === 'FIXED_AMOUNT') {
+      this.productsInCart.forEach(product => {
+        const newPrice = product.price - discountValue;
+        product.price = newPrice > 0 ? newPrice : 0;
+      });
+    } else if (discountType === 'PERCENTAGE') {
+      this.productsInCart.forEach(product => {
+        const newPrice = product.price - (product.price * discountValue);
+        product.price = newPrice > 0 ? newPrice : 0;
+      });
+    }
     this.saveProductsAndNotifyChange();
   }
+
 
 
   // ------------ PRIVATE ------------------

@@ -21,6 +21,7 @@ export class CartComponent implements OnInit {
   public amountOfProducts: number = 0;
   promoCode: string = '';
   discount: number = 0;
+  promoApplied: boolean = false;
 
 
   constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {
@@ -72,13 +73,24 @@ export class CartComponent implements OnInit {
 
 
   applyPromoCode() {
+    if (this.promoApplied) {
+      alert('You can only use one promo code per order.');
+      return;
+    }
+
+    if (this.products_in_cart.length === 0) {
+      alert('No products found');
+      return;
+    }
     const url = `${environment.base_url}/promocodes/validate?code=${this.promoCode}`;
-    this.http.get<{discount: number}>(url).subscribe({
+    this.http.get<{discount: number, type: string}>(url).subscribe({
       next: (response) => {
         this.discount = response.discount;
-        this.cartService.applyDiscount(this.discount);
+        this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE');
+        this.promoApplied = true;
       },
       error: () => alert('Invalid or expired promo code!')
     });
   }
+
 }

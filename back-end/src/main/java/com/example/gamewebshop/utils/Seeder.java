@@ -256,7 +256,7 @@ public class Seeder {
         PromoCode promoCode1 = new PromoCode("SUMMER2024", 0.15, LocalDateTime.of(2024, 8, 31, 23, 59, 59), 100, PromoCode.PromoCodeType.PERCENTAGE);
         PromoCode promoCode2 = new PromoCode("GAMER2024", 0.10, LocalDateTime.of(2024, 12, 31, 23, 59, 59), 50, PromoCode.PromoCodeType.PERCENTAGE);
         PromoCode promoCode3 = new PromoCode("GIFT2024", 0.20, LocalDateTime.of(2024, 11, 15, 23, 59, 59), 200, PromoCode.PromoCodeType.PERCENTAGE);
-        PromoCode promoCode4 = new PromoCode("FIXED20", 20.0, LocalDateTime.of(2024, 5, 3, 2, 40, 1), 1, PromoCode.PromoCodeType.FIXED_AMOUNT);
+        PromoCode promoCode4 = new PromoCode("FIXED20", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT);
 
         promoCodeRepository.save(promoCode1);
         promoCodeRepository.save(promoCode2);

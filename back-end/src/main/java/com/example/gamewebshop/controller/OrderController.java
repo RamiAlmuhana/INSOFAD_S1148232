@@ -66,46 +66,35 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<String> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
         String userEmail = principal.getName();
-        double totalPrice = calculateTotalPrice(placedOrder); // Bereken de totale prijs van de bestelling
-        System.out.println("Total price before discount: " + totalPrice); // Print de totale prijs voordat de korting wordt toegepast
+        double totalPrice = calculateTotalPrice(placedOrder); // Calculate the total price of the order
 
-        try {
-            if (promoCode != null) {
-                // Plaats de isPromoCodeValid methode in de try-blok
+        if (promoCode != null) {
+            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
+            if (promoCodeOptional.isPresent()) {
+                PromoCode code = promoCodeOptional.get();
                 if (promoCodeService.isPromoCodeValid(promoCode)) {
-                    Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
-                    if (promoCodeOptional.isPresent()) {
-                        PromoCode code = promoCodeOptional.get();
-                        if (code.getExpiryDate().isAfter(LocalDateTime.now()) && code.getMaxUsageCount() > 0) {
-                            // Controleer of de promocode geldig is en nog niet verlopen is en nog resterende gebruiksrechten heeft
-                            double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
-                            totalPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
-                            System.out.println("Discount applied: " + discount); // Print de toegepaste korting
-                            System.out.println("Total price after discount: " + totalPrice); // Print de totale prijs na het toepassen van de korting
-                            code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verminder het aantal resterende keren dat de promocode kan worden gebruikt
-                        }
-                    }
+                    double discount = calculateDiscount(totalPrice, code); // Calculate the discount based on the promo code
+                    totalPrice -= discount; // Apply the discount to the total price of the order
+
+                    code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Decrease the remaining usage count of the promo code
+                    promoCodeRepository.save(code); // Save the updated promo code
                 } else {
-                    // Als de promocode ongeldig is, retourneer een ResponseEntity om aan te geven dat de promocode ongeldig is
-                    return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
+                    return ResponseEntity.badRequest().body("{\"message\": \"Invalid or expired promo code\"}");
                 }
+            } else {
+                return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
             }
-        } catch (Exception e) {
-            // Vang de exception op als er een fout optreedt bij het verwerken van de promocode
-            return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
         }
 
-        // Controleer of de totale prijs negatief wordt
         if (totalPrice < 0) {
-            totalPrice = 0; // Zet de totale prijs op 0
+            totalPrice = 0; // Set the total price to 0 if the discount exceeds the total price
         }
 
-        placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
-        System.out.println("Final total price: " + placedOrder.getTotalPrice()); // Print de uiteindelijke totale prijs van de bestelling
-
+        placedOrder.setTotalPrice(totalPrice); // Set the total price of the order
         this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
         return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
     }
+
 
 
 
@@ -122,13 +111,17 @@ public class OrderController {
 
     private double calculateDiscount(double totalPrice, PromoCode promoCode) {
         double discount = 0.0;
+        // Check the type of promo code
         if (promoCode.getType() == PromoCode.PromoCodeType.FIXED_AMOUNT) {
+            // If it's a fixed amount, subtract this value directly
             discount = promoCode.getDiscount();
         } else if (promoCode.getType() == PromoCode.PromoCodeType.PERCENTAGE) {
+            // If it's a percentage, calculate the discount based on the total price
             discount = totalPrice * promoCode.getDiscount();
         }
         return discount;
     }
+
 
 
 
