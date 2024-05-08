@@ -12,19 +12,20 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService: AuthService = inject(AuthService);
   const router: Router = inject(Router);
 
-  if (tokenService.isValid()) {
-    // Gebruiker heeft een geldige token, controleer de rol
-    return authService.getUserRole().pipe(
-      map(role => {
-        if (role === 'admin') {
-          return true; // Gebruiker is een admin, geef toegang
-        } else {
-          router.navigate(['/']); // Gebruiker is geen admin, stuur ze naar de homepage of een andere pagina
-          return false;
-        }
-      })
-    );
+  if (!tokenService.isValid()) {
+    router.navigate(['/auth/login']); // Als de token niet geldig is, stuur naar login
+    return false;
   }
 
-  return false; // Gebruiker heeft geen geldige token, geen toegang
+  return authService.getUserRole().pipe(
+    map(role => {
+      // Controleer of de route admin rechten vereist
+      const requiresAdmin = route.data?.['roles']?.includes('admin');
+      if (requiresAdmin && role !== 'admin') {
+        router.navigate(['/']); // Stuur niet-admins naar de homepage als de route admin rechten vereist
+        return false;
+      }
+      return true; // Toegang toestaan als de roltoets slaagt
+    })
+  );
 };

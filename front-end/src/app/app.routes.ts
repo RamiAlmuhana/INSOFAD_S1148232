@@ -31,7 +31,7 @@ export const routes: Routes = [
   {path: 'order-history', component: OrderHistoryComponent, canActivate: [authGuard] },
   {path: 'paymentsuccessful', component: PaymentSuccessfulComponent, canActivate: [authGuard]},
   {path: 'orders', component: OrderComponent, canActivate: [authGuard]},
-  {path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard]},
+  { path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
   {path: 'admin/promocode-list/promocode-add', component: PromoCodeAddComponent, canActivate: [authGuard]},
   {path: 'admin/promocode-list/promocode-update/:id', component: PromocodeUpdateComponent, canActivate: [authGuard]},
   {path: 'admin/promocode-list', component: AdminPromocodeComponent, canActivate: [authGuard]},
