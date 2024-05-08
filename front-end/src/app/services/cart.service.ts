@@ -86,9 +86,10 @@ export class CartService {
     }
     this.totalPriceWithDiscount = total - this.totalDiscount;
     localStorage.setItem('promoApplied', 'true');
-    localStorage.setItem('promoCode', promoCode); // Opslaan van de promo-code
+    localStorage.setItem('promoCode', promoCode);
     localStorage.setItem('discountValue', discountValue.toString());
     localStorage.setItem('discountType', discountType);
+    localStorage.setItem('displayedDiscount', this.totalDiscount.toString()); // Opslaan van de weergegeven korting
     this.$productInCart.next(this.productsInCart.slice());
   }
 

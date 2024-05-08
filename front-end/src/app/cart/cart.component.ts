@@ -23,6 +23,7 @@ export class CartComponent implements OnInit {
   discount: number = 0;
   promoApplied: boolean = this.checkPromoApplied();
   appliedPromoCode: string = localStorage.getItem('promoCode') || '';
+  displayedDiscount: string = localStorage.getItem('displayedDiscount') || '0';
 
   constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {}
 
@@ -32,6 +33,9 @@ export class CartComponent implements OnInit {
       this.products_in_cart = products;
       this.amountOfProducts = products.length;
       this.checkLoginState();
+      if (this.promoApplied) {
+        this.discount = parseFloat(this.displayedDiscount);  // Gebruik de opgeslagen korting als de promo toegepast is
+      }
     });
   }
 
