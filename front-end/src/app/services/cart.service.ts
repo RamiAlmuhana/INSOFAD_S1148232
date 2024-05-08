@@ -27,11 +27,13 @@ export class CartService {
   private reapplyDiscountIfApplicable() {
     const discountValue = parseFloat(localStorage.getItem('discountValue') || '0');
     const discountType = localStorage.getItem('discountType') as 'FIXED_AMOUNT' | 'PERCENTAGE' | null;
+    const promoCode = localStorage.getItem('promoCode') || '';  // Haal de opgeslagen promo-code op
 
-    if (discountType && discountValue) {
-      this.applyDiscount(discountValue, discountType);
+    if (discountType && discountValue && promoCode) {
+      this.applyDiscount(discountValue, discountType, promoCode);
     }
   }
+
 
   public addProductToCart(productToAdd: Product) {
     let existingProductIndex: number = this.productsInCart.findIndex(product => product.name === productToAdd.name);
@@ -75,7 +77,7 @@ export class CartService {
   }
 
   // Pas korting toe zonder de productprijzen te veranderen
-  public applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE') {
+  public applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE', promoCode: string) {
     const total = this.calculateTotalPrice();
     if (discountType === 'FIXED_AMOUNT') {
       this.totalDiscount = discountValue;
@@ -84,16 +86,17 @@ export class CartService {
     }
     this.totalPriceWithDiscount = total - this.totalDiscount;
     localStorage.setItem('promoApplied', 'true');
+    localStorage.setItem('promoCode', promoCode); // Opslaan van de promo-code
     localStorage.setItem('discountValue', discountValue.toString());
     localStorage.setItem('discountType', discountType);
     this.$productInCart.next(this.productsInCart.slice());
   }
 
-  // Verwijder de korting
   public removeDiscount() {
     this.totalDiscount = 0;
     this.totalPriceWithDiscount = this.calculateTotalPrice();
     localStorage.removeItem('promoApplied');
+    localStorage.removeItem('promoCode'); // Verwijderen van de promo-code
     localStorage.removeItem('discountValue');
     localStorage.removeItem('discountType');
     this.$productInCart.next(this.productsInCart.slice());

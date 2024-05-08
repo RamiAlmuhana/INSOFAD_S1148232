@@ -22,6 +22,7 @@ export class CartComponent implements OnInit {
   promoCode: string = '';
   discount: number = 0;
   promoApplied: boolean = this.checkPromoApplied();
+  appliedPromoCode: string = localStorage.getItem('promoCode') || '';
 
   constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {}
 
@@ -75,12 +76,18 @@ export class CartComponent implements OnInit {
       return;
     }
 
+    if (this.products_in_cart.length === 0) {
+      alert('No products found');
+      return;
+    }
+
     const url = `${environment.base_url}/promocodes/validate?code=${this.promoCode}`;
-    this.http.get<{discount: number, type: string}>(url).subscribe({
+    this.http.get<{ discount: number, type: string }>(url).subscribe({
       next: (response) => {
         this.discount = response.discount;
-        this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE');
+        this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE', this.promoCode);
         this.promoApplied = true;
+        this.appliedPromoCode = this.promoCode; // Update de weergegeven promo-code
       },
       error: () => alert('Invalid or expired promo code!')
     });
@@ -90,9 +97,9 @@ export class CartComponent implements OnInit {
     this.cartService.removeDiscount();
     this.promoApplied = false;
     this.discount = 0;
+    this.appliedPromoCode = ''; // Reset de weergegeven promo-code
     alert('Promo code removed successfully.');
   }
-
   private checkPromoApplied(): boolean {
     return localStorage.getItem('promoApplied') === 'true';
   }
