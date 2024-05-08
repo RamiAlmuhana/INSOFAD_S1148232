@@ -30,7 +30,7 @@
         <div class="col-md-12 mt-3">
           <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Promo code" [(ngModel)]="promoCode" name="promoCode">
-            <button class="btn btn-outline-secondary" type="button" (click)="applyPromoCode()">Apply Promo Code</button>
+            <button [disabled]="onInvalidOrder()" class="btn btn-outline-secondary" type="button" (click)="applyPromoCode()">Apply Promo Code</button>
           </div>
           <p *ngIf="promoApplied">Promo Code Applied: {{ appliedPromoCode }}</p>
           <p *ngIf="discount > 0">Discount Applied: {{ discount | currency: 'EUR' }}</p>
