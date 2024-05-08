@@ -15,11 +15,22 @@ export class CartService {
   private productsInCart: Product[] = [];
   public $productInCart: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
   public totalDiscount: number = 0;
-  public totalPriceWithDiscount: number = 0;
+  public totalPriceWithDiscount: number = this.loadInitialDiscountedPrice();
   private baseUrl: string = environment.base_url + "/orders";
+
 
   constructor(private http: HttpClient) {
     this.loadProductsFromLocalStorage();
+    this.reapplyDiscountIfApplicable();
+  }
+
+  private reapplyDiscountIfApplicable() {
+    const discountValue = parseFloat(localStorage.getItem('discountValue') || '0');
+    const discountType = localStorage.getItem('discountType') as 'FIXED_AMOUNT' | 'PERCENTAGE' | null;
+
+    if (discountType && discountValue) {
+      this.applyDiscount(discountValue, discountType);
+    }
   }
 
   public addProductToCart(productToAdd: Product) {
@@ -72,8 +83,10 @@ export class CartService {
       this.totalDiscount = total * (discountValue / 100);
     }
     this.totalPriceWithDiscount = total - this.totalDiscount;
-    localStorage.setItem('promoApplied', 'true');  // Bewaar de status van de promo-code
-    this.$productInCart.next(this.productsInCart.slice()); // Update de observable
+    localStorage.setItem('promoApplied', 'true');
+    localStorage.setItem('discountValue', discountValue.toString());
+    localStorage.setItem('discountType', discountType);
+    this.$productInCart.next(this.productsInCart.slice());
   }
 
   // Verwijder de korting
@@ -81,12 +94,27 @@ export class CartService {
     this.totalDiscount = 0;
     this.totalPriceWithDiscount = this.calculateTotalPrice();
     localStorage.removeItem('promoApplied');
+    localStorage.removeItem('discountValue');
+    localStorage.removeItem('discountType');
     this.$productInCart.next(this.productsInCart.slice());
   }
 
   // Bereken de totale prijs zonder korting
   public calculateTotalPrice(): number {
     return this.productsInCart.reduce((total, product) => total + product.price * product.amount, 0);
+  }
+
+  private loadInitialDiscountedPrice(): number {
+    const total = this.calculateTotalPrice();
+    const discountValue = parseFloat(localStorage.getItem('discountValue') || '0');
+    const discountType = localStorage.getItem('discountType') as 'FIXED_AMOUNT' | 'PERCENTAGE' | null;
+
+    if (discountType === 'FIXED_AMOUNT') {
+      return Math.max(0, total - discountValue);
+    } else if (discountType === 'PERCENTAGE') {
+      return Math.max(0, total - (total * discountValue / 100));
+    }
+    return total;
   }
 
 
