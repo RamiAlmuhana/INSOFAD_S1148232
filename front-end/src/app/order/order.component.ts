@@ -19,6 +19,7 @@ export class OrderComponent implements OnInit {
   public products_in_cart: Product[];
   public order: Order;
   public totalPrice: number;
+  public promoCode: string;
 
   constructor(private cartService: CartService, private router: Router, private fb: FormBuilder) {}
 
@@ -39,31 +40,32 @@ export class OrderComponent implements OnInit {
   }
 
   public onSubmit() {
-      const formData = this.bestelForm.value;
+    const formData = this.bestelForm.value;
 
-      this.order = {
-        id: formData.id,
-        name: formData.name,
-        infix: formData.infix,
-        last_name: formData.lastName,
-        zipcode: formData.zipCode,
-        houseNumber: formData.houseNumber,
-        notes: formData.notes,
-        orderDate: formData.orderDatum,
-        products: this.products_in_cart,
-        totalPrice: this.totalPrice
-      };
+    this.order = {
+      id: formData.id,
+      name: formData.name,
+      infix: formData.infix,
+      last_name: formData.lastName,
+      zipcode: formData.zipCode,
+      houseNumber: formData.houseNumber,
+      notes: formData.notes,
+      orderDate: new Date().toISOString(),
+      products: this.products_in_cart,
+      totalPrice: this.totalPrice,
+      promoCode: localStorage.getItem('promoCode') || ''
+    };
 
-      this.cartService.addOrder(this.order).subscribe(
-        (result) => {
-          console.log('Order added successfully:', result);
-          this.clearCart();
-          this.router.navigateByUrl('/paymentsuccessful');
-        },
-        (error) => {
-          console.error('Failed to add order:', error);
-        }
-      );
-
+    this.cartService.addOrder(this.order).subscribe(
+      (result) => {
+        console.log('Order added successfully:', result);
+        this.clearCart();
+        this.router.navigateByUrl('/paymentsuccessful');
+      },
+      (error) => {
+        console.error('Failed to add order:', error);
+      }
+    );
   }
+
 }

@@ -11,4 +11,5 @@ export class Order {
   public orderDate: string;
   public products: Product[];
   public totalPrice: number;
+  public promoCode: string | null;
 }

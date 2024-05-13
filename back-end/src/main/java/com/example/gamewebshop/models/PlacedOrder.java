@@ -33,6 +33,8 @@ public class PlacedOrder {
     private double totalPrice;
     @Column(nullable = true)
     private double discountedPrice;
+    @Column(nullable = true)
+    private String promoCode;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JsonBackReference
     private CustomUser user;
@@ -160,5 +162,14 @@ public class PlacedOrder {
 
     public void setDiscountedPrice(double discountedPrice) {
         this.discountedPrice = discountedPrice;
+    }
+
+
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
     }
 }

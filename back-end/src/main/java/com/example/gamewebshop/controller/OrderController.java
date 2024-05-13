@@ -65,44 +65,48 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal) {
         String userEmail = principal.getName();
-        double totalPrice = calculateTotalPrice(placedOrder); // Bereken de totale prijs van de bestelling
+        CustomUser user = userRepository.findByEmail(userEmail);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+        placedOrder.setUser(user);
 
-        double discountedPrice = totalPrice; // Begin met totale prijs als afgeprijsde prijs
+        double totalPrice = calculateTotalPrice(placedOrder);
+        double discountedPrice = totalPrice;
 
-        if (promoCode != null) {
+        String promoCode = placedOrder.getPromoCode();
+        if (promoCode != null && !promoCode.isEmpty()) {
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
-            if (promoCodeOptional.isPresent()) {
+            if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(promoCode)) {
                 PromoCode code = promoCodeOptional.get();
-                if (promoCodeService.isPromoCodeValid(promoCode)) {
-                    double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
-                    discountedPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
-
-                    code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verlaag het resterende gebruiksaantal van de promocode
-                    promoCodeRepository.save(code); // Sla de bijgewerkte promocode op
-                } else {
-                    return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
+                double discount = calculateDiscount(totalPrice, code);
+                discountedPrice -= discount;
+                if (discountedPrice < 0) {
+                    discountedPrice = 0;
                 }
+                code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                promoCodeRepository.save(code);
             } else {
-                return ResponseEntity.badRequest().body(Map.of("message", "Invalid promo code"));
+                return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
             }
         }
 
-        if (discountedPrice < 0) {
-            discountedPrice = 0; // Stel de afgeprijsde prijs in op 0 als de korting de totale prijs overschrijdt
-        }
-        System.out.println("Received promoCode: " + promoCode);
-        placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
-        placedOrder.setDiscountedPrice(discountedPrice); // Stel de afgeprijsde prijs in
-        orderDAO.saveOrderWithProducts(placedOrder, userEmail); // Sla de bestelling op met de producten en gebruiker
+        placedOrder.setTotalPrice(totalPrice);
+        placedOrder.setDiscountedPrice(discountedPrice);
+        orderDAO.saveOrderWithProducts(placedOrder, userEmail);
 
         return ResponseEntity.ok(Map.of(
                 "message", "Order created successfully",
                 "totalPrice", totalPrice,
-                "discountedPrice", discountedPrice
+                "discountedPrice", discountedPrice,
+                "promoCode", promoCode != null ? promoCode : "No promo code used"
         ));
     }
+
+
+
 
 
 
