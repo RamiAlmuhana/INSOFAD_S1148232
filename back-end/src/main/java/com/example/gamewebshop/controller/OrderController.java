@@ -65,7 +65,7 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
         String userEmail = principal.getName();
         CustomUser user = userRepository.findByEmail(userEmail);
         if (user == null) {
@@ -76,10 +76,12 @@ public class OrderController {
         double totalPrice = calculateTotalPrice(placedOrder);
         double discountedPrice = totalPrice;
 
-        String promoCode = placedOrder.getPromoCode();
-        if (promoCode != null && !promoCode.isEmpty()) {
-            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
-            if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(promoCode)) {
+        // Eerst proberen de promocode uit de request parameter te halen, als die er niet is, uit het PlacedOrder object
+        String effectivePromoCode = promoCode != null ? promoCode : placedOrder.getPromoCode();
+
+        if (effectivePromoCode != null && !effectivePromoCode.isEmpty()) {
+            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(effectivePromoCode);
+            if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(effectivePromoCode)) {
                 PromoCode code = promoCodeOptional.get();
                 double discount = calculateDiscount(totalPrice, code);
                 discountedPrice -= discount;
@@ -88,6 +90,7 @@ public class OrderController {
                 }
                 code.setMaxUsageCount(code.getMaxUsageCount() - 1);
                 promoCodeRepository.save(code);
+                placedOrder.setPromoCode(effectivePromoCode);
             } else {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
             }
@@ -101,9 +104,10 @@ public class OrderController {
                 "message", "Order created successfully",
                 "totalPrice", totalPrice,
                 "discountedPrice", discountedPrice,
-                "promoCode", promoCode != null ? promoCode : "No promo code used"
+                "promoCode", effectivePromoCode != null ? effectivePromoCode : "No promo code used"
         ));
     }
+
 
 
 
