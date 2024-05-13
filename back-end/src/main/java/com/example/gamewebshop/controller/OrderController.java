@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -64,36 +65,45 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<String> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
         String userEmail = principal.getName();
-        double totalPrice = calculateTotalPrice(placedOrder); // Calculate the total price of the order
+        double totalPrice = calculateTotalPrice(placedOrder); // Bereken de totale prijs van de bestelling
+
+        double discountedPrice = totalPrice; // Begin met totale prijs als afgeprijsde prijs
 
         if (promoCode != null) {
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
             if (promoCodeOptional.isPresent()) {
                 PromoCode code = promoCodeOptional.get();
                 if (promoCodeService.isPromoCodeValid(promoCode)) {
-                    double discount = calculateDiscount(totalPrice, code); // Calculate the discount based on the promo code
-                    totalPrice -= discount; // Apply the discount to the total price of the order
+                    double discount = calculateDiscount(totalPrice, code); // Bereken de korting op basis van de promocode
+                    discountedPrice -= discount; // Pas de korting toe op de totale prijs van de bestelling
 
-                    code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Decrease the remaining usage count of the promo code
-                    promoCodeRepository.save(code); // Save the updated promo code
+                    code.setMaxUsageCount(code.getMaxUsageCount() - 1); // Verlaag het resterende gebruiksaantal van de promocode
+                    promoCodeRepository.save(code); // Sla de bijgewerkte promocode op
                 } else {
-                    return ResponseEntity.badRequest().body("{\"message\": \"Invalid or expired promo code\"}");
+                    return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
                 }
             } else {
-                return ResponseEntity.badRequest().body("{\"message\": \"Invalid promo code\"}");
+                return ResponseEntity.badRequest().body(Map.of("message", "Invalid promo code"));
             }
         }
 
-        if (totalPrice < 0) {
-            totalPrice = 0; // Set the total price to 0 if the discount exceeds the total price
+        if (discountedPrice < 0) {
+            discountedPrice = 0; // Stel de afgeprijsde prijs in op 0 als de korting de totale prijs overschrijdt
         }
+        System.out.println("Received promoCode: " + promoCode);
+        placedOrder.setTotalPrice(totalPrice); // Stel de totale prijs van de bestelling in
+        placedOrder.setDiscountedPrice(discountedPrice); // Stel de afgeprijsde prijs in
+        orderDAO.saveOrderWithProducts(placedOrder, userEmail); // Sla de bestelling op met de producten en gebruiker
 
-        placedOrder.setTotalPrice(totalPrice); // Set the total price of the order
-        this.orderDAO.saveOrderWithProducts(placedOrder, userEmail);
-        return ResponseEntity.ok().body("{\"message\": \"Order created successfully\"}");
+        return ResponseEntity.ok(Map.of(
+                "message", "Order created successfully",
+                "totalPrice", totalPrice,
+                "discountedPrice", discountedPrice
+        ));
     }
+
 
 
 
