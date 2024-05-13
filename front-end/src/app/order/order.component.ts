@@ -60,12 +60,21 @@ export class OrderComponent implements OnInit {
       (result) => {
         console.log('Order added successfully:', result);
         this.clearCart();
+        this.removePromoCodeFromLocalStorage();
         this.router.navigateByUrl('/paymentsuccessful');
       },
       (error) => {
         console.error('Failed to add order:', error);
       }
     );
+  }
+
+  private removePromoCodeFromLocalStorage() {
+    localStorage.removeItem('promoCode'); // Verwijder de promo-code
+    localStorage.removeItem('promoApplied'); // Optioneel, verwijder ook andere gerelateerde items
+    localStorage.removeItem('discountValue');
+    localStorage.removeItem('discountType');
+    localStorage.removeItem('displayedDiscount');
   }
 
 }
