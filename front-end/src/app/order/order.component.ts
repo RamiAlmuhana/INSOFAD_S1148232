@@ -50,7 +50,7 @@ export class OrderComponent implements OnInit {
       zipcode: formData.zipCode,
       houseNumber: formData.houseNumber,
       notes: formData.notes,
-      orderDate: new Date().toISOString(),
+      orderDate: formData.orderDatum,
       products: this.products_in_cart,
       totalPrice: this.totalPrice,
       promoCode: localStorage.getItem('promoCode') || ''
