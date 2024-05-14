@@ -23,7 +23,7 @@
                     <p class="text-muted mb-0">Total: {{ product.price * product.amount | currency: 'EUR' }}</p>
                   </div>
                   <div class="col-md-2 text-end">
-                    <button (click)="removeProductFromCart(i)" class="btn btn-sm">Remove</button>
+                    <button (click)="removeProductFromCart(i)" class="btn btn-sm"><i class="fa-solid fa-trash"></i></button>
                   </div>
                 </div>
               </div>
@@ -62,10 +62,10 @@
             <!-- Action Buttons -->
             <div class="row mt-4">
               <div class="col-12 mb-3">
-                <button [disabled]="onInvalidOrder()" (click)="clearCart()" class="btn btn-outline-secondary w-100">Empty Shopping Cart</button>
+                <button [disabled]="onInvalidOrder()" (click)="clearCart()" class="btn btn-outline-secondary w-100"><i class="fa-solid fa-trash"></i> Empty Shopping Cart</button>
               </div>
               <div class="col-12">
-                <button [disabled]="onInvalidOrder()" (click)="onOrder()" class="btn btn-primary w-100">Buy</button>
+                <button [disabled]="onInvalidOrder()" (click)="onOrder()" class="btn btn-primary w-100"> <i class="fa-solid fa-cart-shopping"></i> Buy</button>
               </div>
             </div>
           </div>

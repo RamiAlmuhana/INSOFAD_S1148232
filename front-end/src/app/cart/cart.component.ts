@@ -41,7 +41,15 @@ export class CartComponent implements OnInit {
 
   public clearCart() {
     this.cartService.clearCart();
+    localStorage.removeItem('promoCode'); // Verwijder de promo-code
+    localStorage.removeItem('promoApplied'); // Optioneel, verwijder ook andere gerelateerde items
+    localStorage.removeItem('discountValue');
+    localStorage.removeItem('discountType');
+    localStorage.removeItem('displayedDiscount');
+    this.cartService.removeDiscount();
     this.promoApplied = false;
+    this.discount = 0;
+    this.appliedPromoCode = '';
   }
 
   public removeProductFromCart(product_index: number) {
