@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -85,10 +84,13 @@ public class OrderController {
             System.out.println("Product: " + product.getName() + ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "No Category"));
         });
 
-        // Valideer en pas de door de gebruiker ingevoerde promotiecode toe, indien aanwezig
-        if (promoCode != null && !promoCode.isEmpty()) {
-            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(promoCode);
-            if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(promoCode)) {
+        // Gebruik de promo code uit de queryparameter als deze is opgegeven, anders gebruik de promo code uit de body
+        String effectivePromoCode = promoCode != null && !promoCode.isEmpty() ? promoCode : placedOrder.getPromoCode();
+
+        if (effectivePromoCode != null && !effectivePromoCode.isEmpty()) {
+            // Gebruiker heeft een promo-code ingevoerd
+            Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(effectivePromoCode);
+            if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(effectivePromoCode)) {
                 PromoCode code = promoCodeOptional.get();
                 double discount = calculateDiscount(totalPrice, code);
                 discountedPrice -= discount;
@@ -97,42 +99,40 @@ public class OrderController {
                 }
                 code.setMaxUsageCount(code.getMaxUsageCount() - 1);
                 promoCodeRepository.save(code);
-                placedOrder.setPromoCode(promoCode);
             } else {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
             }
         } else {
-            // Als de gebruiker geen promotiecode heeft ingevoerd, pas de categorie-gebaseerde promotiecode toe
-            Set<PromoCode> applicablePromoCodes = promoCodeRepository.findAll().stream()
+            // Controleer voor categorie-gebaseerde promo-codes
+            Optional<PromoCode> applicablePromoCode = promoCodeRepository.findAll().stream()
                     .filter(promo -> placedOrder.getProducts().stream()
                             .anyMatch(product -> product.getCategory() != null && product.getCategory().equals(promo.getCategory())))
-                    .collect(Collectors.toSet());
+                    .findFirst();
 
-            for (PromoCode promo : applicablePromoCodes) {
-                if (promoCodeService.isPromoCodeValid(promo.getCode())) {
-                    System.out.println("Applicable promo code found: " + promo.getCode());
-                    double discount = calculateDiscount(totalPrice, promo);
-                    discountedPrice -= discount;
-                    if (discountedPrice < 0) {
-                        discountedPrice = 0;
-                    }
-                    promo.setMaxUsageCount(promo.getMaxUsageCount() - 1);
-                    promoCodeRepository.save(promo);
-                    placedOrder.setPromoCode(promo.getCode());
-                    break; // Gebruik de eerste geldige categorie-gebaseerde promotiecode en stop verder zoeken
+            if (applicablePromoCode.isPresent() && promoCodeService.isPromoCodeValid(applicablePromoCode.get().getCode())) {
+                PromoCode code = applicablePromoCode.get();
+                System.out.println("Applicable promo code found: " + code.getCode());
+                double discount = calculateDiscount(totalPrice, code);
+                discountedPrice -= discount;
+                if (discountedPrice < 0) {
+                    discountedPrice = 0;
                 }
+                code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                promoCodeRepository.save(code);
+                effectivePromoCode = code.getCode();
             }
         }
 
         placedOrder.setTotalPrice(totalPrice);
         placedOrder.setDiscountedPrice(discountedPrice);
+        placedOrder.setPromoCode(effectivePromoCode);
         orderDAO.saveOrderWithProducts(placedOrder, userEmail);
 
         return ResponseEntity.ok(Map.of(
                 "message", "Order created successfully",
                 "totalPrice", totalPrice,
                 "discountedPrice", discountedPrice,
-                "promoCode", placedOrder.getPromoCode() != null ? placedOrder.getPromoCode() : "No promo code used"
+                "promoCode", effectivePromoCode != null ? effectivePromoCode : "No promo code used"
         ));
     }
 
