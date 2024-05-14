@@ -3,7 +3,6 @@ import { OrderService } from '../../services/order.service'; // Pas dit pad aan 
 import { Order } from '../../models/order.model'; // Pas dit pad aan naar waar je model zich bevindt
 import { CommonModule } from '@angular/common';
 
-
 @Component({
   selector: 'app-order-history',
   templateUrl: './order-history.component.html',
@@ -12,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./order-history.component.scss']
 })
 export class OrderHistoryComponent implements OnInit {
-  orders: any[];
+  orders: Order[]; // Zorg ervoor dat dit het juiste model gebruikt
 
   constructor(private orderService: OrderService) { }
 

@@ -20,6 +20,7 @@ export class OrderComponent implements OnInit {
   public order: Order;
   public totalPrice: number;
   public promoCode: string;
+  public discountedPrice: number;
 
   constructor(private cartService: CartService, private router: Router, private fb: FormBuilder) {}
 
@@ -53,6 +54,7 @@ export class OrderComponent implements OnInit {
       orderDate: formData.orderDatum,
       products: this.products_in_cart,
       totalPrice: this.totalPrice,
+      discountedPrice: this.discountedPrice,
       promoCode: localStorage.getItem('promoCode') || ''
     };
 

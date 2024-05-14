@@ -24,6 +24,9 @@
               </li>
             </ul>
             <p class="order-total"><span class="fw-bold">Total:</span> {{ order.totalPrice | currency: 'EUR' }}</p>
+            <p class="order-discounted-total"><span class="fw-bold">Discounted Total:</span> {{ order.discountedPrice | currency: 'EUR' }}</p>
+            <p class="order-discounted-total"><span class="fw-bold">Discounted price:</span> {{ order.totalPrice - order.discountedPrice | currency: 'EUR' }}</p>
+            <p class="order-promo-code" *ngIf="order.promoCode"><span class="fw-bold">Promo Code Used:</span> {{ order.promoCode }}</p>
           </div>
         </div>
       </div>
