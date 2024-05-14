@@ -21,7 +21,6 @@ public class Seeder {
     private final PromoCodeRepository promoCodeRepository;
     private final CategoryRepository categoryRepository;
 
-
     public Seeder(ProductDAO productDAO, UserRepository userRepository, OrderDAO orderDAO, ProductRepository productRepository, PromoCodeRepository promoCodeRepository, CategoryRepository categoryRepository) {
         this.productDAO = productDAO;
         this.userRepository = userRepository;
@@ -33,13 +32,13 @@ public class Seeder {
 
     @EventListener
     public void seed(ContextRefreshedEvent event){
+        this.seedCategories();
         this.seedProducts();
-        this.seedUser();
-        this.seedUser2();
-        seedPromoCodes();
+        this.seedUsers();
+        this.seedPromoCodes();
     }
 
-    private void seedProducts(){
+    private void seedCategories() {
         Category FPS = new Category("FPS");
         Category fighter = new Category("Fighter");
         Category soulsLike = new Category("Souls-like");
@@ -48,8 +47,23 @@ public class Seeder {
         Category openWorld = new Category("Open world");
         Category racing = new Category("Racing");
 
-
         categoryRepository.save(FPS);
+        categoryRepository.save(fighter);
+        categoryRepository.save(soulsLike);
+        categoryRepository.save(action);
+        categoryRepository.save(creative);
+        categoryRepository.save(openWorld);
+        categoryRepository.save(racing);
+    }
+
+    private void seedProducts(){
+        Category FPS = categoryRepository.findByName("FPS").orElse(null);
+        Category fighter = categoryRepository.findByName("Fighter").orElse(null);
+        Category soulsLike = categoryRepository.findByName("Souls-like").orElse(null);
+        Category action = categoryRepository.findByName("Action").orElse(null);
+        Category creative = categoryRepository.findByName("Creative").orElse(null);
+        Category openWorld = categoryRepository.findByName("Open world").orElse(null);
+        Category racing = categoryRepository.findByName("Racing").orElse(null);
 
         Product rainbowSixSiege = new Product(
                 "Tom Clancy's Rainbow Six Siege",
@@ -58,9 +72,9 @@ public class Seeder {
                 "https://store.ubisoft.com/on/demandware.static/-/Sites-masterCatalog/default/dw63e24d90/images/large/56c494ad88a7e300458b4d5a.jpg",
                 FPS,
                 "OS *: Originally released for Windows 7, the game can be played on Windows 10 and Windows 11 OS" +
-                "Processor: Intel Core i5-2500K @ 3.3 GHz or better or AMD FX-8120 @ 3.1 Ghz or better\n" +
-                "Memory: 8 GB RAM\n" +
-                "Graphics: NVIDIA GeForce GTX 670 or AMD Radeon HD 7970",
+                        "Processor: Intel Core i5-2500K @ 3.3 GHz or better or AMD FX-8120 @ 3.1 Ghz or better\n" +
+                        "Memory: 8 GB RAM\n" +
+                        "Graphics: NVIDIA GeForce GTX 670 or AMD Radeon HD 7970",
                 "1-Dec-2015",
                 "Ubisoft");
         Product mortalKombar1 = new Product(
@@ -70,13 +84,13 @@ public class Seeder {
                 "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSAMOK3cjH0oK89AraaQ_DJQ3EyioLRJxCnq0X2lLPXDisjyn1XOuwGkRLht5b1c7d7G6Uk2w",
                 fighter,
                 "Requires a 64-bit processor and operating system\n" +
-                "OS: Windows 10/11 64-bit\n" +
-                "Processor: Intel® Core™ i5-8400 | AMD Ryzen™ 5 3600X\n" +
-                "Memory: 8 GB RAM\n" +
-                "Graphics: Nvidia GeForce® GTX 1080 Ti or AMD Radeon™ RX 5700 XT or Intel® Arc™ A770\n" +
-                "DirectX: Version 12\n" +
-                "Storage: 140 GB available space\n" +
-                "Additional Notes: SSD",
+                        "OS: Windows 10/11 64-bit\n" +
+                        "Processor: Intel® Core™ i5-8400 | AMD Ryzen™ 5 3600X\n" +
+                        "Memory: 8 GB RAM\n" +
+                        "Graphics: Nvidia GeForce® GTX 1080 Ti or AMD Radeon™ RX 5700 XT or Intel® Arc™ A770\n" +
+                        "DirectX: Version 12\n" +
+                        "Storage: 140 GB available space\n" +
+                        "Additional Notes: SSD",
                 "19 Sep, 2023",
                 "Warner Bros. Games");
         Product eldenRing = new Product(
@@ -86,10 +100,10 @@ public class Seeder {
                 "https://upload.wikimedia.org/wikipedia/en/b/b9/Elden_Ring_Box_art.jpg",
                 soulsLike,
                 "Requires a 64-bit processor and operating system\n" +
-                "OS: Windows 10/11\n" +
-                "Processor: INTEL CORE I7-8700K or AMD RYZEN 5 3600X\n" +
-                "Memory: 16 GB RAM\n" +
-                "Graphics: NVIDIA GEFORCE GTX 1070 8 GB or AMD RADEON RX VEGA 56 8 GB",
+                        "OS: Windows 10/11\n" +
+                        "Processor: INTEL CORE I7-8700K or AMD RYZEN 5 3600X\n" +
+                        "Memory: 16 GB RAM\n" +
+                        "Graphics: NVIDIA GEFORCE GTX 1070 8 GB or AMD RADEON RX VEGA 56 8 GB",
                 "25-Feb-2022",
                 "FromSoftware Inc., Bandai Namco Entertainment");
         Product helldivers2 = new Product(
@@ -237,7 +251,7 @@ public class Seeder {
         this.productDAO.createProduct(crashTeamRacing);
     }
 
-    private void seedUser(){
+    private void seedUsers(){
         CustomUser customUser = new CustomUser();
         customUser.setName("Rami");
         customUser.setInfix("");
@@ -246,30 +260,45 @@ public class Seeder {
         customUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
         customUser.setRole("user");
         userRepository.save(customUser);
-    }
-    private void seedUser2(){
-        CustomUser customUser = new CustomUser();
-        customUser.setName("admin");
-        customUser.setInfix("");
-        customUser.setLastName("admin");
-        customUser.setEmail("admin@mail.com");
-        customUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
-        customUser.setRole("admin");
-        userRepository.save(customUser);
+
+        CustomUser adminUser = new CustomUser();
+        adminUser.setName("admin");
+        adminUser.setInfix("");
+        adminUser.setLastName("admin");
+        adminUser.setEmail("admin@mail.com");
+        adminUser.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
+        adminUser.setRole("admin");
+        userRepository.save(adminUser);
     }
 
     private void seedPromoCodes() {
-        PromoCode promoCode1 = new PromoCode("SUMMER2024", 15, LocalDateTime.of(2024, 8, 31, 23, 59, 59), 100, PromoCode.PromoCodeType.PERCENTAGE);
-        PromoCode promoCode2 = new PromoCode("GAMER2024", 10, LocalDateTime.of(2024, 12, 31, 23, 59, 59), 50, PromoCode.PromoCodeType.PERCENTAGE);
-        PromoCode promoCode3 = new PromoCode("GIFT2024", 20, LocalDateTime.of(2024, 11, 15, 23, 59, 59), 200, PromoCode.PromoCodeType.PERCENTAGE);
-        PromoCode promoCode4 = new PromoCode("FIXED20", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT);
-        PromoCode promoCode5 = new PromoCode("FPS_DISCOUNT", 10.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT);
+        Category fpsCategory = categoryRepository.findByName("FPS").orElse(null);
+        Category actionCategory = categoryRepository.findByName("Action").orElse(null);
+        Category creativeCategory = categoryRepository.findByName("Creative").orElse(null);
+
+        if (fpsCategory != null) {
+            PromoCode fpsDiscount = new PromoCode("FPS_DISCOUNT", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT, fpsCategory);
+            promoCodeRepository.save(fpsDiscount);
+        }
+
+        if (actionCategory != null) {
+            PromoCode actionDiscount = new PromoCode("ACTION_DISCOUNT", 15.0, LocalDateTime.of(2025, 6, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT, actionCategory);
+            promoCodeRepository.save(actionDiscount);
+        }
+
+        if (creativeCategory != null) {
+            PromoCode creativeDiscount = new PromoCode("CREATIVE_DISCOUNT", 10.0, LocalDateTime.of(2025, 7, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT, creativeCategory);
+            promoCodeRepository.save(creativeDiscount);
+        }
+
+        PromoCode promoCode1 = new PromoCode("SUMMER2024", 15, LocalDateTime.of(2024, 8, 31, 23, 59, 59), 100, PromoCode.PromoCodeType.PERCENTAGE, null);
+        PromoCode promoCode2 = new PromoCode("GAMER2024", 10, LocalDateTime.of(2024, 12, 31, 23, 59, 59), 50, PromoCode.PromoCodeType.PERCENTAGE, null);
+        PromoCode promoCode3 = new PromoCode("GIFT2024", 20, LocalDateTime.of(2024, 11, 15, 23, 59, 59), 200, PromoCode.PromoCodeType.PERCENTAGE, null);
+        PromoCode promoCode4 = new PromoCode("FIXED20", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT, null);
 
         promoCodeRepository.save(promoCode1);
         promoCodeRepository.save(promoCode2);
         promoCodeRepository.save(promoCode3);
         promoCodeRepository.save(promoCode4);
-        promoCodeRepository.save(promoCode5);
     }
-
 }

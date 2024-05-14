@@ -1,8 +1,6 @@
 package com.example.gamewebshop.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -16,21 +14,23 @@ public class PromoCode {
     private LocalDateTime expiryDate;
     private int maxUsageCount;
     private PromoCodeType type;
-    // Add other properties as needed
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    public PromoCode(String code, double discount, LocalDateTime expiryDate, int maxUsageCount, PromoCodeType type) {
+    // Constructors, getters, and setters
+
+    public PromoCode(String code, double discount, LocalDateTime expiryDate, int maxUsageCount, PromoCodeType type, Category category) {
         this.code = code;
         this.discount = discount;
         this.expiryDate = expiryDate;
         this.maxUsageCount = maxUsageCount;
         this.type = type;
+        this.category = category;
     }
 
-    public PromoCode() {
-
-    }
-
+    public PromoCode() {}
 
     public Long getId() {
         return id;
@@ -80,9 +80,16 @@ public class PromoCode {
         this.type = type;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public enum PromoCodeType {
         FIXED_AMOUNT,
         PERCENTAGE
     }
-
 }
