@@ -1,38 +1,42 @@
-<div class="container">
+<div class="container mt-5">
   <div class="row">
-    <div class="col-lg-8 offset-lg-2">
+    <div class="col-lg-12">
       <div class="orders-container" *ngIf="orders && orders.length > 0; else noOrders">
-        <div class="order" *ngFor="let order of orders">
-          <div class="order-details">
-            <p class="order-info"><span class="fw-bold">Order ID:</span> {{order.id}}</p>
-            <p class="order-info"><span class="fw-bold">Order Date:</span> {{order.orderDate | date: 'medium'}}</p>
-            <div class="customer-info">
-              <h5><span class="fw-bold">Customer Information</span></h5>
-              <p><span class="fw-bold">Name:</span> {{order.name}} {{order.infix}} {{order.last_name}}</p>
-              <p><span class="fw-bold">Address:</span> {{order.houseNumber}}, {{order.zipcode}}</p>
-              <p><span class="fw-bold">Notes:</span> {{order.notes}}</p>
+        <div class="row">
+          <div class="col-lg-4 mb-4" *ngFor="let order of orders">
+            <div class="order p-3 border rounded">
+              <div class="order-details">
+                <p class="order-info"><span class="fw-bold">Order ID:</span> {{order.id}}</p>
+                <p class="order-info"><span class="fw-bold">Order Date:</span> {{order.orderDate | date: 'medium'}}</p>
+                <div class="customer-info my-3">
+                  <h5><span class="fw-bold">Customer Information</span></h5>
+                  <p><span class="fw-bold">Name:</span> {{order.name}} {{order.infix}} {{order.last_name}}</p>
+                  <p><span class="fw-bold">Address:</span> {{order.houseNumber}}, {{order.zipcode}}</p>
+                  <p><span class="fw-bold">Notes:</span> {{order.notes}}</p>
+                </div>
+                <ul class="products-list list-unstyled">
+                  <li class="product d-flex align-items-start mb-3" *ngFor="let product of order.products">
+                    <div class="product-details me-3">
+                      <p class="product-name"><span class="fw-bold">Product Name:</span> {{product.name}}</p>
+                      <p class="product-price"><span class="fw-bold">Price:</span> {{product.price | currency: 'EUR'}}</p>
+                    </div>
+                    <div class="product-image">
+                      <img src="{{product.imgURL}}" alt="{{product.name}}" class="img-fluid" style="max-width: 100px;">
+                    </div>
+                  </li>
+                </ul>
+                <p class="order-total"><span class="fw-bold">Total:</span> {{ order.totalPrice | currency: 'EUR' }}</p>
+                <p class="order-discounted-total"><span class="fw-bold">Discounted Total:</span> {{ order.discountedPrice | currency: 'EUR' }}</p>
+                <p class="order-discounted-amount"><span class="fw-bold">Discounted Price:</span> {{ order.totalPrice - order.discountedPrice | currency: 'EUR' }}</p>
+                <p class="order-promo-code" *ngIf="order.promoCode"><span class="fw-bold">Promo Code Used:</span> {{ order.promoCode }}</p>
+              </div>
             </div>
-            <ul class="products-list">
-              <li class="product" *ngFor="let product of order.products">
-                <div class="product-details">
-                  <p class="product-name"><span class="fw-bold">Product Name:</span> {{product.name}}</p>
-                  <p class="product-price"><span class="fw-bold">Price:</span> {{product.price | currency: 'EUR'}}</p>
-                </div>
-                <div class="product-image">
-                  <img src="{{product.imgURL}}" alt="{{product.name}}">
-                </div>
-              </li>
-            </ul>
-            <p class="order-total"><span class="fw-bold">Total:</span> {{ order.totalPrice | currency: 'EUR' }}</p>
-            <p class="order-discounted-total"><span class="fw-bold">Discounted Total:</span> {{ order.discountedPrice | currency: 'EUR' }}</p>
-            <p class="order-discounted-total"><span class="fw-bold">Discounted price:</span> {{ order.totalPrice - order.discountedPrice | currency: 'EUR' }}</p>
-            <p class="order-promo-code" *ngIf="order.promoCode"><span class="fw-bold">Promo Code Used:</span> {{ order.promoCode }}</p>
           </div>
         </div>
       </div>
 
       <ng-template #noOrders>
-        <div class="no-orders-message">
+        <div class="no-orders-message text-center mt-5">
           <p>Geen bestellingen gevonden.</p>
         </div>
       </ng-template>
