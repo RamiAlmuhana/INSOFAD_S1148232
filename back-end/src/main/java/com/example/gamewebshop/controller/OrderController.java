@@ -1,6 +1,7 @@
 package com.example.gamewebshop.controller;
 
 import com.example.gamewebshop.dao.OrderDAO;
+import com.example.gamewebshop.dao.ProductRepository;
 import com.example.gamewebshop.dao.PromoCodeRepository;
 import com.example.gamewebshop.dao.UserRepository;
 import com.example.gamewebshop.models.CustomUser;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -26,19 +29,20 @@ public class OrderController {
     private final UserRepository userRepository;
     private final PromoCodeService promoCodeService;
     private final PromoCodeRepository promoCodeRepository;
+    private final ProductRepository productRepository;
 
-    public OrderController(OrderDAO orderDAO, UserRepository userRepository, PromoCodeService promoCodeService, PromoCodeRepository promoCodeRepository) {
+    public OrderController(OrderDAO orderDAO, UserRepository userRepository, PromoCodeService promoCodeService, PromoCodeRepository promoCodeRepository, ProductRepository productRepository) {
         this.orderDAO = orderDAO;
         this.userRepository = userRepository;
         this.promoCodeService = promoCodeService;
         this.promoCodeRepository = promoCodeRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<PlacedOrder>> getAllOrders(){
+    public ResponseEntity<List<PlacedOrder>> getAllOrders() {
         return ResponseEntity.ok(this.orderDAO.getAllOrders());
     }
-
 
     @GetMapping("/myOrders")
     public ResponseEntity<List<PlacedOrder>> getOrdersByUserPrincipal(Principal principal) {
@@ -52,17 +56,8 @@ public class OrderController {
         }
 
         List<PlacedOrder> orders = this.orderDAO.getOrdersByUserId(user.getId());
-
-        // Voorbeeld: Stel dat je 'totalProducts' al hebt ingesteld in je OrderDAO of ergens anders
-        // Anders, hier zou je logica toevoegen om 'totalProducts' te berekenen voor elke bestelling.
-        // Bijvoorbeeld, voor elke bestelling, tel het aantal producten en stel 'totalProducts' in.
-        // Dit is een eenvoudige demonstratie die ervan uitgaat dat de totalen al berekend zijn.
-
         return ResponseEntity.ok(orders);
     }
-
-
-
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody PlacedOrder placedOrder, Principal principal, @RequestParam(required = false) String promoCode) {
@@ -73,13 +68,43 @@ public class OrderController {
         }
         placedOrder.setUser(user);
 
+        // Haal volledige productinformatie op, inclusief categorieën
+        List<Product> productsWithCategory = placedOrder.getProducts().stream()
+                .map(product -> productRepository.findById(product.getId()).orElse(null))
+                .filter(product -> product != null)
+                .collect(Collectors.toList());
+
+        placedOrder.setProducts(new HashSet<>(productsWithCategory));
+
         double totalPrice = calculateTotalPrice(placedOrder);
         double discountedPrice = totalPrice;
 
-        // Eerst proberen de promocode uit de request parameter te halen, als die er niet is, uit het PlacedOrder object
-        String effectivePromoCode = promoCode != null ? promoCode : placedOrder.getPromoCode();
+        // Print producten en categorieën
+        placedOrder.getProducts().forEach(product -> {
+            System.out.println("Product: " + product.getName() + ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "No Category"));
+        });
 
-        if (effectivePromoCode != null && !effectivePromoCode.isEmpty()) {
+        // Check for FPS discount
+        boolean hasFPSProduct = placedOrder.getProducts().stream()
+                .anyMatch(product -> product.getCategory() != null && "FPS".equalsIgnoreCase(product.getCategory().getName()));
+        if (hasFPSProduct) {
+            System.out.println("FPS product found, applying FPS_DISCOUNT");
+            Optional<PromoCode> fpsPromoCode = promoCodeRepository.findByCode("FPS_DISCOUNT");
+            if (fpsPromoCode.isPresent() && promoCodeService.isPromoCodeValid("FPS_DISCOUNT")) {
+                double discount = calculateDiscount(totalPrice, fpsPromoCode.get());
+                discountedPrice -= discount;
+                if (discountedPrice < 0) {
+                    discountedPrice = 0;
+                }
+                fpsPromoCode.get().setMaxUsageCount(fpsPromoCode.get().getMaxUsageCount() - 1);
+                promoCodeRepository.save(fpsPromoCode.get());
+                placedOrder.setPromoCode("FPS_DISCOUNT");
+            }
+        }
+
+        // Additional promo code logic
+        String effectivePromoCode = promoCode != null ? promoCode : placedOrder.getPromoCode();
+        if (effectivePromoCode != null && !effectivePromoCode.isEmpty() && !effectivePromoCode.equals("FPS_DISCOUNT")) {
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(effectivePromoCode);
             if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(effectivePromoCode)) {
                 PromoCode code = promoCodeOptional.get();
@@ -108,40 +133,16 @@ public class OrderController {
         ));
     }
 
-
-
-
-
-
-
-
-
-
-
-
     private double calculateTotalPrice(PlacedOrder placedOrder) {
-        double totalPrice = 0.0;
-        for (Product product : placedOrder.getProducts()) {
-            totalPrice += product.getPrice().doubleValue();
-        }
-        return totalPrice;
+        return placedOrder.getProducts().stream().mapToDouble(Product::getPrice).sum();
     }
 
     private double calculateDiscount(double totalPrice, PromoCode promoCode) {
-        double discount = 0.0;
-        // Check the type of promo code
         if (promoCode.getType() == PromoCode.PromoCodeType.FIXED_AMOUNT) {
-            // If it's a fixed amount, subtract this value directly
-            discount = promoCode.getDiscount();
+            return promoCode.getDiscount();
         } else if (promoCode.getType() == PromoCode.PromoCodeType.PERCENTAGE) {
-            // If it's a percentage, calculate the discount based on the total price
-            discount = totalPrice * (promoCode.getDiscount() / 100);
+            return totalPrice * (promoCode.getDiscount() / 100);
         }
-        return discount;
+        return 0.0;
     }
-
-
-
-
-
 }
