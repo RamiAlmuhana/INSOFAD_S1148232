@@ -1,11 +1,64 @@
 .btn {
-  background-color: black;
-  border: 1px solid black;
   font-size: 15px;
-  color: white;
+  transition: background-color 0.3s, color 0.3s;
+  border-color: black;
 
   &:hover {
-    background-color: white;
-    color: black;
+    background-color: black;
+    color: white;
   }
+
+  &-primary {
+    background-color: black;
+    border-color: black;
+
+    &:hover {
+      background-color: white;
+      color: black;
+    }
+  }
+
+  &-outline-secondary {
+    border-color: black;
+    color: black;
+
+    &:hover {
+      background-color: black;
+      color: white;
+    }
+  }
+}
+
+.card {
+  border-radius: .5rem;
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+.img-fluid {
+  border-radius: .25rem;
+}
+
+.lead {
+  font-weight: 600;
+}
+
+input[type="text"] {
+  border-radius: 0.25rem 0 0 0.25rem;
+
+  &:focus {
+    box-shadow: none;
+    border-color: black;
+  }
+}
+
+h5.card-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.text-muted {
+  color: #6c757d !important;
 }
