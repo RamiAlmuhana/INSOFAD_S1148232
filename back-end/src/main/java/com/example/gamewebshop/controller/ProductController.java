@@ -21,27 +21,15 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(){
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return ResponseEntity.ok(this.productDAO.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id){
-
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(this.productDAO.getProductById(id));
     }
 
-    @GetMapping(params = "categoryId")
-    public ResponseEntity<List<Product>> getProductsByCategory(@RequestParam Long categoryId){
-
-        return ResponseEntity.ok(this.productDAO.getAllProductsByCategory(categoryId));
-    }
-
-//    @PostMapping
-//    public ResponseEntity<String> createProduct(@RequestBody ProductDTO productDTO){
-//        this.productDAO.createProduct(productDTO);
-//        return ResponseEntity.ok("Created a product");
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO){
@@ -56,5 +44,10 @@ public class ProductController {
         this.productDAO.deleteById(id);
 
         return ResponseEntity.ok("Product deleted with id " + id);
+    }
+
+    @GetMapping(params = "categoryId")
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@RequestParam Long categoryId) {
+        return ResponseEntity.ok(this.productDAO.getAllProductsByCategory(categoryId));
     }
 }

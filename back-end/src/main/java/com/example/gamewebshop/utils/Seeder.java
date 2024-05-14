@@ -257,11 +257,13 @@ public class Seeder {
         PromoCode promoCode2 = new PromoCode("GAMER2024", 10, LocalDateTime.of(2024, 12, 31, 23, 59, 59), 50, PromoCode.PromoCodeType.PERCENTAGE);
         PromoCode promoCode3 = new PromoCode("GIFT2024", 20, LocalDateTime.of(2024, 11, 15, 23, 59, 59), 200, PromoCode.PromoCodeType.PERCENTAGE);
         PromoCode promoCode4 = new PromoCode("FIXED20", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT);
+        PromoCode promoCode5 = new PromoCode("FPS_DISCOUNT", 20.0, LocalDateTime.of(2025, 5, 3, 2, 40, 1), 50, PromoCode.PromoCodeType.FIXED_AMOUNT);
 
         promoCodeRepository.save(promoCode1);
         promoCodeRepository.save(promoCode2);
         promoCodeRepository.save(promoCode3);
         promoCodeRepository.save(promoCode4);
+        promoCodeRepository.save(promoCode5);
     }
 
 }

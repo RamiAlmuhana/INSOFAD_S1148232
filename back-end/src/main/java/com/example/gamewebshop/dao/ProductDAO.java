@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ProductDAO {
@@ -21,28 +22,25 @@ public class ProductDAO {
         this.categoryRepository = category;
     }
 
-    public List<Product> getAllProducts(){
-        return this.productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        return this.productRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public Product getProductById(long id){
+    public ProductDTO getProductById(long id) {
         Optional<Product> product = this.productRepository.findById(id);
-
-        return product.orElseThrow(() -> new ResponseStatusException(
+        return product.map(this::convertToDTO).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "No product found with that id"
         ));
     }
 
-    public List<Product> getAllProductsByCategory(long id){
-        Optional<List<Product>> products =this.productRepository.findByCategoryId(id);
-
-        if (products.get().isEmpty()){
+    public List<ProductDTO> getAllProductsByCategory(long categoryId) {
+        Optional<List<Product>> products = this.productRepository.findByCategoryId(categoryId);
+        if (products.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "No products found with that category id"
             );
         }
-
-        return products.get();
+        return products.get().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
 
@@ -65,5 +63,20 @@ public class ProductDAO {
 
     public void deleteById(Long id) {
         this.productRepository.deleteById(id);
+    }
+
+    private ProductDTO convertToDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setName(product.getName());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setImgURL(product.getImgURL());
+        productDTO.setSpecifications(product.getSpecifications());
+        productDTO.setPublisher(product.getPublisher());
+        productDTO.setReleaseDate(product.getReleaseDate());
+        productDTO.setCategoryId(product.getCategory().getId());
+        productDTO.setCategoryName(product.getCategory().getName());
+        return productDTO;
     }
 }
