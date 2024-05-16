@@ -10,7 +10,7 @@
         <p class="h4">{{ product.price | currency: 'EUR' }}</p>
       </div>
       <div class="col-md-12 col-lg-3 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
-        <a [routerLinkActive]="['active']" routerLink="/products/{{product.id}}" class="btn btn-outline-primary me-2 w-100 w-lg-auto">
+        <a [routerLinkActive]="['active']" routerLink="/products/{{product.id}}" class="btn btn-details me-2 w-100 w-lg-auto">
           <i class="fas fa-info-circle"></i> Details
         </a>
         <button (click)="buyProduct(product)" class="btn btn-primary w-100 w-lg-auto">

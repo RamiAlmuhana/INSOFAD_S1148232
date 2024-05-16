@@ -9,3 +9,14 @@
     color: black;
   }
 }
+
+
+.btn-details{
+  background: white;
+  color: black;
+
+  &:hover{
+    background-color: black;
+    color: white;
+  }
+}
