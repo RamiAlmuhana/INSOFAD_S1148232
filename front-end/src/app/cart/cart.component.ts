@@ -109,11 +109,23 @@ export class CartComponent implements OnInit {
       next: (response) => {
         const total = this.getTotalPrice();
         if (total >= response.minSpendAmount) {
-          this.discount = response.discount;
-          this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE', this.promoCode);
-          this.promoApplied = true;
-          this.appliedPromoCode = this.promoCode;
-          this.promoCodeError = false; // Reset error flag
+          let discount = 0;
+          if (response.type === 'FIXED_AMOUNT') {
+            discount = response.discount;
+          } else if (response.type === 'PERCENTAGE') {
+            discount = total * (response.discount / 100);
+          }
+
+          if (total - discount > 0) { // Ensure total price doesn't become zero or negative
+            this.discount = discount;
+            this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE', this.promoCode);
+            this.promoApplied = true;
+            this.appliedPromoCode = this.promoCode;
+            this.promoCodeError = false; // Reset error flag
+          } else {
+            this.promoCodeError = true;
+            this.promoCodeErrorMessage = 'Promo code cannot be applied as it makes the total price zero or negative.';
+          }
         } else {
           this.promoCodeError = true;
           this.promoCodeErrorMessage = `Minimum spend amount for this promo code is ${response.minSpendAmount}`;
@@ -125,6 +137,7 @@ export class CartComponent implements OnInit {
       }
     });
   }
+
 
   removePromoCode() {
     this.cartService.removeDiscount();

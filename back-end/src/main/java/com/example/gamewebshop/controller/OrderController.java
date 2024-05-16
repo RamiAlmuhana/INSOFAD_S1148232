@@ -68,7 +68,6 @@ public class OrderController {
         }
         placedOrder.setUser(user);
 
-        // Haal volledige productinformatie op, inclusief categorieën
         List<Product> productsWithCategory = placedOrder.getProducts().stream()
                 .map(product -> productRepository.findById(product.getId()).orElse(null))
                 .filter(product -> product != null)
@@ -79,16 +78,12 @@ public class OrderController {
         double totalPrice = calculateTotalPrice(placedOrder);
         double discountedPrice = totalPrice;
 
-        // Gebruik de promo code uit de queryparameter als deze is opgegeven, anders gebruik de promo code uit de body
         String effectivePromoCode = promoCode != null && !promoCode.isEmpty() ? promoCode : placedOrder.getPromoCode();
 
         if (effectivePromoCode != null && !effectivePromoCode.isEmpty()) {
-            // Gebruiker heeft een promo-code ingevoerd
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(effectivePromoCode);
             if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(effectivePromoCode)) {
                 PromoCode code = promoCodeOptional.get();
-
-                // Check if the total price meets the minimum spend amount
                 if (totalPrice >= code.getMinSpendAmount()) {
                     double discount = calculateDiscount(totalPrice, code);
                     discountedPrice -= discount;
@@ -104,7 +99,6 @@ public class OrderController {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
             }
         } else {
-            // Controleer voor categorie-gebaseerde promo-codes
             Optional<PromoCode> applicablePromoCode = promoCodeRepository.findAll().stream()
                     .filter(promo -> placedOrder.getProducts().stream()
                             .anyMatch(product -> product.getCategory() != null && product.getCategory().equals(promo.getCategory())))
@@ -112,10 +106,8 @@ public class OrderController {
 
             if (applicablePromoCode.isPresent() && promoCodeService.isPromoCodeValid(applicablePromoCode.get().getCode())) {
                 PromoCode code = applicablePromoCode.get();
-
-                // Check if the total price meets the minimum spend amount
-                if (totalPrice >= code.getMinSpendAmount()) {
-                    double discount = calculateDiscount(totalPrice, code);
+                double discount = calculateDiscount(totalPrice, code);
+                if (totalPrice - discount > 0) { // Ensure total price doesn't become zero or negative
                     discountedPrice -= discount;
                     if (discountedPrice < 0) {
                         discountedPrice = 0;
@@ -152,4 +144,5 @@ public class OrderController {
         }
         return 0.0;
     }
+
 }
