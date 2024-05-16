@@ -63,7 +63,8 @@ public class PromoCodeController {
                     "type", validPromoCode.getType().toString(),
                     "minSpendAmount", validPromoCode.getMinSpendAmount(),
                     "startDate", validPromoCode.getStartDate(),  // Include startDate
-                    "expiryDate", validPromoCode.getExpiryDate()
+                    "expiryDate", validPromoCode.getExpiryDate(),
+                    "categoryId", validPromoCode.getCategory() != null ? validPromoCode.getCategory().getId() : null  // Include categoryId
             ));
         }
         return ResponseEntity.badRequest().build();

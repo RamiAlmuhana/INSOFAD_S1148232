@@ -1,5 +1,7 @@
 // promo-code.model.ts
 
+import {Category} from "./category.model";
+
 export interface PromoCode {
   id: number;
   code: string;
@@ -9,6 +11,7 @@ export interface PromoCode {
   maxUsageCount: number;
   type: PromoCodeType;
   minSpendAmount: number;
+  category?: Category; // New field for category
 }
 
 export enum PromoCodeType {

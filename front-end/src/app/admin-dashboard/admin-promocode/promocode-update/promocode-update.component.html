@@ -13,7 +13,7 @@
   </div>
   <div class="mb-3">
     <label for="startDate" class="form-label">Start Date:</label>
-    <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate"> <!-- Add this line -->
+    <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate">
   </div>
   <div class="mb-3">
     <label for="expiryDate" class="form-label">Expiry Date:</label>
@@ -28,6 +28,13 @@
     <select class="form-select" id="type" formControlName="type">
       <option value="FIXED_AMOUNT">Fixed Amount</option>
       <option value="PERCENTAGE">Percentage</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="categoryId" class="form-label">Category:</label>
+    <select class="form-select" id="categoryId" formControlName="categoryId">
+      <option [ngValue]="null">None</option>
+      <option *ngFor="let category of categories" [ngValue]="category.id">{{ category.name }}</option>
     </select>
   </div>
   <button type="submit" class="btn btn-primary w-100">Edit Promo Code</button>

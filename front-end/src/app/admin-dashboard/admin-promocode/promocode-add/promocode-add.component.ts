@@ -1,28 +1,53 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PromoCodeService } from "../../../services/promocode.service";
+import { CategoryService } from "../../../services/category.service";
+import { Category } from "../../../models/category.model";
+import {NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-promocode-add',
   templateUrl: 'promocode-add.component.html',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgForOf
   ],
   styleUrls: ['promocode-add.component.scss']
 })
 export class PromoCodeAddComponent implements OnInit {
   promoCodeForm: FormGroup;
+  categories: Category[] = [];
 
-  constructor(private formBuilder: FormBuilder, private promoCodeService: PromoCodeService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private promoCodeService: PromoCodeService,
+    private categoryService: CategoryService
+  ) {
     this.promoCodeForm = this.formBuilder.group({
       code: ['', Validators.required],
       discount: ['', [Validators.required, Validators.min(0)]],
       expiryDate: ['', Validators.required],
       startDate: ['', Validators.required],
       maxUsageCount: ['', [Validators.required, Validators.min(1)]],
-      type: ['', Validators.required]
+      type: ['', Validators.required],
+      categoryId: [null]
     });
+  }
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe(
+      (categories) => {
+        this.categories = categories;
+      },
+      (error) => {
+        console.error('Error loading categories:', error);
+      }
+    );
   }
 
   onSubmit(): void {
@@ -30,27 +55,23 @@ export class PromoCodeAddComponent implements OnInit {
       return;
     }
 
-    // Format expiryDate to ISO 8601 string format
+    const formValue = this.promoCodeForm.value;
+
     const promoCodeData = {
-      ...this.promoCodeForm.value,
-      expiryDate: new Date(this.promoCodeForm.value.expiryDate).toISOString(),
-      startDate: new Date(this.promoCodeForm.value.startDate).toISOString()  // Add this line
+      ...formValue,
+      expiryDate: new Date(formValue.expiryDate).toISOString(),
+      startDate: new Date(formValue.startDate).toISOString(),
+      category: formValue.categoryId ? { id: formValue.categoryId } : null
     };
+
     this.promoCodeService.createPromoCode(promoCodeData).subscribe(
       () => {
-        // Handle successful creation
         console.log('Promo code created successfully.');
-        // Reset the form
         this.promoCodeForm.reset();
       },
       (error: any) => {
-        // Handle error
         console.error('Error creating promo code:', error);
       }
     );
-  }
-
-  ngOnInit(): void {
-    // Remove form initialization from here if you initialize in the constructor
   }
 }

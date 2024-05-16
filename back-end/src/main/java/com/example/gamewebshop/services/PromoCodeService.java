@@ -1,6 +1,8 @@
 package com.example.gamewebshop.services;
 
+import com.example.gamewebshop.dao.CategoryRepository;
 import com.example.gamewebshop.dao.PromoCodeRepository;
+import com.example.gamewebshop.models.Category;
 import com.example.gamewebshop.models.PromoCode;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,11 @@ import java.util.Optional;
 @Service
 public class PromoCodeService {
     private final PromoCodeRepository promoCodeRepository;
+    private final CategoryRepository categoryRepository;
 
-    public PromoCodeService(PromoCodeRepository promoCodeRepository) {
+    public PromoCodeService(PromoCodeRepository promoCodeRepository, CategoryRepository categoryRepository) {
         this.promoCodeRepository = promoCodeRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<PromoCode> getAllPromoCodes() {
@@ -21,6 +25,10 @@ public class PromoCodeService {
     }
 
     public PromoCode addPromoCode(PromoCode promoCode) {
+        if (promoCode.getCategory() != null) {
+            Category category = categoryRepository.findById(promoCode.getCategory().getId()).orElse(null);
+            promoCode.setCategory(category);
+        }
         return promoCodeRepository.save(promoCode);
     }
 
@@ -31,10 +39,15 @@ public class PromoCodeService {
             existingPromoCode.setCode(promoCodeDetails.getCode());
             existingPromoCode.setDiscount(promoCodeDetails.getDiscount());
             existingPromoCode.setExpiryDate(promoCodeDetails.getExpiryDate());
-            existingPromoCode.setStartDate(promoCodeDetails.getStartDate()); // Handle startDate
+            existingPromoCode.setStartDate(promoCodeDetails.getStartDate());
             existingPromoCode.setMaxUsageCount(promoCodeDetails.getMaxUsageCount());
             existingPromoCode.setMinSpendAmount(promoCodeDetails.getMinSpendAmount());
-            existingPromoCode.setCategory(promoCodeDetails.getCategory()); // Handle category
+            if (promoCodeDetails.getCategory() != null) {
+                Category category = categoryRepository.findById(promoCodeDetails.getCategory().getId()).orElse(null);
+                existingPromoCode.setCategory(category);
+            } else {
+                existingPromoCode.setCategory(null);
+            }
             return promoCodeRepository.save(existingPromoCode);
         } else {
             return null; // Or throw an exception
@@ -55,7 +68,7 @@ public class PromoCodeService {
 
     public boolean isPromoCodeValid(String code) {
         Optional<PromoCode> promoCodeOptional = getPromoCodeByCode(code);
-        return promoCodeOptional.isPresent() && promoCodeOptional.get().getExpiryDate().isAfter(LocalDateTime.now()) && promoCodeOptional.get().getMaxUsageCount() > 0 && promoCodeOptional.get().getStartDate().isBefore(LocalDateTime.now()); // Check if current date is after startDate
+        return promoCodeOptional.isPresent() && promoCodeOptional.get().getExpiryDate().isAfter(LocalDateTime.now()) && promoCodeOptional.get().getMaxUsageCount() > 0 && promoCodeOptional.get().getStartDate().isBefore(LocalDateTime.now());
     }
 
     public Optional<PromoCode> getPromoCodeById(Long id) {
