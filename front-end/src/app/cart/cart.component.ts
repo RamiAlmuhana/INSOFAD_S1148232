@@ -105,9 +105,19 @@ export class CartComponent implements OnInit {
     }
 
     const url = `${environment.base_url}/promocodes/validate?code=${this.promoCode}`;
-    this.http.get<{ discount: number, type: string, minSpendAmount: number }>(url).subscribe({
+    this.http.get<{ discount: number, type: string, minSpendAmount: number, startDate: string, expiryDate: string }>(url).subscribe({
       next: (response) => {
         const total = this.getTotalPrice();
+        const now = new Date();
+        const startDate = new Date(response.startDate);
+        const expiryDate = new Date(response.expiryDate);
+
+        if (now < startDate) {
+          this.promoCodeError = true;
+          this.promoCodeErrorMessage = `This promo code is not valid until ${startDate.toLocaleDateString()}`;
+          return;
+        }
+
         if (total >= response.minSpendAmount) {
           let discount = 0;
           if (response.type === 'FIXED_AMOUNT') {
@@ -137,6 +147,7 @@ export class CartComponent implements OnInit {
       }
     });
   }
+
 
 
   removePromoCode() {

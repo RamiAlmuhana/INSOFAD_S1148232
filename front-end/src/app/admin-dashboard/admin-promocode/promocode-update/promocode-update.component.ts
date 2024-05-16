@@ -28,6 +28,7 @@ export class PromocodeUpdateComponent implements OnInit {
       code: ['', Validators.required],
       discount: ['', [Validators.required, Validators.min(0)]],
       expiryDate: ['', Validators.required],
+      startDate: ['', Validators.required],
       maxUsageCount: ['', [Validators.required, Validators.min(1)]],
       type: ['', Validators.required]
     });

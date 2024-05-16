@@ -12,6 +12,7 @@ public class PromoCode {
     private String code;
     private double discount;
     private LocalDateTime expiryDate;
+    private LocalDateTime startDate;
     private int maxUsageCount;
     private PromoCodeType type;
     private double minSpendAmount;
@@ -22,10 +23,11 @@ public class PromoCode {
 
     // Constructors, getters, and setters
 
-    public PromoCode(String code, double discount, LocalDateTime expiryDate, int maxUsageCount, PromoCodeType type, Category category, double minSpendAmount) {
+    public PromoCode(String code, double discount, LocalDateTime expiryDate, LocalDateTime startDate, int maxUsageCount, PromoCodeType type, Category category, double minSpendAmount) {
         this.code = code;
         this.discount = discount;
         this.expiryDate = expiryDate;
+        this.startDate = startDate;
         this.maxUsageCount = maxUsageCount;
         this.type = type;
         this.category = category;
@@ -64,6 +66,14 @@ public class PromoCode {
 
     public void setExpiryDate(LocalDateTime expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
 
     public int getMaxUsageCount() {

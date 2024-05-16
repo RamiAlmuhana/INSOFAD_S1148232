@@ -5,9 +5,10 @@ export interface PromoCode {
   code: string;
   discount: number;
   expiryDate: Date;
+  startDate: Date; // New field
   maxUsageCount: number;
   type: PromoCodeType;
-  minSpendAmount: number; // New field
+  minSpendAmount: number;
 }
 
 export enum PromoCodeType {

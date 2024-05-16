@@ -19,6 +19,7 @@ export class PromoCodeAddComponent implements OnInit {
       code: ['', Validators.required],
       discount: ['', [Validators.required, Validators.min(0)]],
       expiryDate: ['', Validators.required],
+      startDate: ['', Validators.required],
       maxUsageCount: ['', [Validators.required, Validators.min(1)]],
       type: ['', Validators.required]
     });
@@ -30,8 +31,11 @@ export class PromoCodeAddComponent implements OnInit {
     }
 
     // Format expiryDate to ISO 8601 string format
-    const promoCodeData = { ...this.promoCodeForm.value, expiryDate: new Date(this.promoCodeForm.value.expiryDate).toISOString() };
-
+    const promoCodeData = {
+      ...this.promoCodeForm.value,
+      expiryDate: new Date(this.promoCodeForm.value.expiryDate).toISOString(),
+      startDate: new Date(this.promoCodeForm.value.startDate).toISOString()  // Add this line
+    };
     this.promoCodeService.createPromoCode(promoCodeData).subscribe(
       () => {
         // Handle successful creation

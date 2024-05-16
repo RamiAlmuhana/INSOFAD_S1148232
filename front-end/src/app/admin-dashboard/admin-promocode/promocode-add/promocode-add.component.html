@@ -1,3 +1,5 @@
+<!-- promocode-add.component.html -->
+
 <form [formGroup]="promoCodeForm" (ngSubmit)="onSubmit()" class="p-4 shadow-sm bg-light rounded">
   <h2 class="text-center mb-4">Create Promo Code</h2>
   <div class="mb-3">
@@ -10,6 +12,10 @@
       <input type="number" class="form-control" id="discount" formControlName="discount" placeholder="Enter discount amount">
       <span class="input-group-text">%</span>
     </div>
+  </div>
+  <div class="mb-3">
+    <label for="startDate" class="form-label">Start Date:</label>
+    <input type="datetime-local" class="form-control" id="startDate" formControlName="startDate"> <!-- Add this line -->
   </div>
   <div class="mb-3">
     <label for="expiryDate" class="form-label">Expiry Date:</label>

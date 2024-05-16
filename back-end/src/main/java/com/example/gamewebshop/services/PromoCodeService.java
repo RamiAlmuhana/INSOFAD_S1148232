@@ -31,8 +31,10 @@ public class PromoCodeService {
             existingPromoCode.setCode(promoCodeDetails.getCode());
             existingPromoCode.setDiscount(promoCodeDetails.getDiscount());
             existingPromoCode.setExpiryDate(promoCodeDetails.getExpiryDate());
+            existingPromoCode.setStartDate(promoCodeDetails.getStartDate()); // Handle startDate
             existingPromoCode.setMaxUsageCount(promoCodeDetails.getMaxUsageCount());
-            existingPromoCode.setMinSpendAmount(promoCodeDetails.getMinSpendAmount()); // Handle new field
+            existingPromoCode.setMinSpendAmount(promoCodeDetails.getMinSpendAmount());
+            existingPromoCode.setCategory(promoCodeDetails.getCategory()); // Handle category
             return promoCodeRepository.save(existingPromoCode);
         } else {
             return null; // Or throw an exception
@@ -53,7 +55,7 @@ public class PromoCodeService {
 
     public boolean isPromoCodeValid(String code) {
         Optional<PromoCode> promoCodeOptional = getPromoCodeByCode(code);
-        return promoCodeOptional.isPresent() && promoCodeOptional.get().getExpiryDate().isAfter(LocalDateTime.now()) && promoCodeOptional.get().getMaxUsageCount() > 0;
+        return promoCodeOptional.isPresent() && promoCodeOptional.get().getExpiryDate().isAfter(LocalDateTime.now()) && promoCodeOptional.get().getMaxUsageCount() > 0 && promoCodeOptional.get().getStartDate().isBefore(LocalDateTime.now()); // Check if current date is after startDate
     }
 
     public Optional<PromoCode> getPromoCodeById(Long id) {

@@ -61,7 +61,9 @@ public class PromoCodeController {
             return ResponseEntity.ok(Map.of(
                     "discount", validPromoCode.getDiscount(),
                     "type", validPromoCode.getType().toString(),
-                    "minSpendAmount", validPromoCode.getMinSpendAmount() // Include minSpendAmount
+                    "minSpendAmount", validPromoCode.getMinSpendAmount(),
+                    "startDate", validPromoCode.getStartDate(),  // Include startDate
+                    "expiryDate", validPromoCode.getExpiryDate()
             ));
         }
         return ResponseEntity.badRequest().build();
