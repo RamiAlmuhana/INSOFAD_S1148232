@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  database:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo_app_db
+    # ports:
+    #   - "5432:5432"
+
+  rami-backend:
+    build: ./back-end
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/todo_app_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      SERVER_ERROR_INCLUDE_MESSAGE: always
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /api
+      JWT_SECRET: supersecretduckspasswordtokens11**
+      JWT_EXPIRATION: 3600000
+    depends_on:
+      - database
+
+  rami-frontend:
+    build: ./front-end
+    ports:
+      - "4201:80"  # Let op dat poort 4201 wordt gebruikt i.p.v. 4200
+    depends_on:
+        - rami-backend

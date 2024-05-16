@@ -1,3 +1,4 @@
 export const environment = {
-  base_url: "",
+  base_url: "/api",
 };
+

@@ -5,15 +5,16 @@ import {BehaviorSubject, map, Observable, tap} from 'rxjs';
 import {AuthRequest} from './auth-request.model';
 import {TokenService} from './token.service';
 import {User} from "../models/user.model";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private _loginEndpoint: string = 'http://localhost:8080/api/auth/login';
-  private _registerEndpoint: string = 'http://localhost:8080/api/auth/register';
-  private _currentUserEndpoint: string = 'http://localhost:8080/api/auth/user';
+  private _loginEndpoint: string = environment.base_url + '/auth/login';
+  private _registerEndpoint: string = environment.base_url + '/auth/register';
+  private _currentUserEndpoint: string = environment.base_url + '/auth/user';
 
   public $userIsLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 

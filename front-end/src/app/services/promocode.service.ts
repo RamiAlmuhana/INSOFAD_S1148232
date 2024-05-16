@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PromoCode } from "../models/promocode.model";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PromoCodeService {
 
-  private baseUrl = 'http://localhost:8080/api/promocodes';
+  private baseUrl = environment.base_url + '/promocodes';
 
   constructor(private http: HttpClient) { }
 
