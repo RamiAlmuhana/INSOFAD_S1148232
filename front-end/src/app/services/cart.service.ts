@@ -18,7 +18,6 @@ export class CartService {
   public totalPriceWithDiscount: number = this.loadInitialDiscountedPrice();
   private baseUrl: string = environment.base_url + "/orders";
 
-
   constructor(private http: HttpClient) {
     this.loadProductsFromLocalStorage();
     this.reapplyDiscountIfApplicable();
@@ -27,13 +26,12 @@ export class CartService {
   private reapplyDiscountIfApplicable() {
     const discountValue = parseFloat(localStorage.getItem('discountValue') || '0');
     const discountType = localStorage.getItem('discountType') as 'FIXED_AMOUNT' | 'PERCENTAGE' | null;
-    const promoCode = localStorage.getItem('promoCode') || '';  // Haal de opgeslagen promo-code op
+    const promoCode = localStorage.getItem('promoCode') || '';
 
     if (discountType && discountValue && promoCode) {
       this.applyDiscount(discountValue, discountType, promoCode);
     }
   }
-
 
   public addProductToCart(productToAdd: Product) {
     let existingProductIndex: number = this.productsInCart.findIndex(product => product.name === productToAdd.name);
@@ -58,7 +56,7 @@ export class CartService {
 
   public clearCart() {
     this.productsInCart = [];
-    localStorage.removeItem(promoAppliedKey);  // Reset promo code status on cart clear
+    localStorage.removeItem(promoAppliedKey);
     this.saveProductsAndNotifyChange();
   }
 
@@ -76,7 +74,6 @@ export class CartService {
     );
   }
 
-  // Pas korting toe zonder de productprijzen te veranderen
   public applyDiscount(discountValue: number, discountType: 'FIXED_AMOUNT' | 'PERCENTAGE', promoCode: string) {
     const total = this.calculateTotalPrice();
     if (discountType === 'FIXED_AMOUNT') {
@@ -89,7 +86,7 @@ export class CartService {
     localStorage.setItem('promoCode', promoCode);
     localStorage.setItem('discountValue', discountValue.toString());
     localStorage.setItem('discountType', discountType);
-    localStorage.setItem('displayedDiscount', this.totalDiscount.toString()); // Opslaan van de weergegeven korting
+    localStorage.setItem('displayedDiscount', this.totalDiscount.toString());
     this.$productInCart.next(this.productsInCart.slice());
   }
 
@@ -97,13 +94,12 @@ export class CartService {
     this.totalDiscount = 0;
     this.totalPriceWithDiscount = this.calculateTotalPrice();
     localStorage.removeItem('promoApplied');
-    localStorage.removeItem('promoCode'); // Verwijderen van de promo-code
+    localStorage.removeItem('promoCode');
     localStorage.removeItem('discountValue');
     localStorage.removeItem('discountType');
     this.$productInCart.next(this.productsInCart.slice());
   }
 
-  // Bereken de totale prijs zonder korting
   public calculateTotalPrice(): number {
     return this.productsInCart.reduce((total, product) => total + product.price * product.amount, 0);
   }
@@ -121,8 +117,6 @@ export class CartService {
     return total;
   }
 
-
-  // ------------ PRIVATE ------------------
   private saveProductsAndNotifyChange(): void {
     this.saveProductsToLocalStorage(this.productsInCart.slice());
     this.$productInCart.next(this.productsInCart.slice());

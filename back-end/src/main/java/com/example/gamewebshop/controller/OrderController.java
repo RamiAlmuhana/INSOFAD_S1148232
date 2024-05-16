@@ -79,11 +79,6 @@ public class OrderController {
         double totalPrice = calculateTotalPrice(placedOrder);
         double discountedPrice = totalPrice;
 
-        // Print producten en categorieën
-        placedOrder.getProducts().forEach(product -> {
-            System.out.println("Product: " + product.getName() + ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "No Category"));
-        });
-
         // Gebruik de promo code uit de queryparameter als deze is opgegeven, anders gebruik de promo code uit de body
         String effectivePromoCode = promoCode != null && !promoCode.isEmpty() ? promoCode : placedOrder.getPromoCode();
 
@@ -92,13 +87,19 @@ public class OrderController {
             Optional<PromoCode> promoCodeOptional = promoCodeService.getPromoCodeByCode(effectivePromoCode);
             if (promoCodeOptional.isPresent() && promoCodeService.isPromoCodeValid(effectivePromoCode)) {
                 PromoCode code = promoCodeOptional.get();
-                double discount = calculateDiscount(totalPrice, code);
-                discountedPrice -= discount;
-                if (discountedPrice < 0) {
-                    discountedPrice = 0;
+
+                // Check if the total price meets the minimum spend amount
+                if (totalPrice >= code.getMinSpendAmount()) {
+                    double discount = calculateDiscount(totalPrice, code);
+                    discountedPrice -= discount;
+                    if (discountedPrice < 0) {
+                        discountedPrice = 0;
+                    }
+                    code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                    promoCodeRepository.save(code);
+                } else {
+                    return ResponseEntity.badRequest().body(Map.of("message", "Total price does not meet the minimum spend amount for this promo code"));
                 }
-                code.setMaxUsageCount(code.getMaxUsageCount() - 1);
-                promoCodeRepository.save(code);
             } else {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired promo code"));
             }
@@ -111,15 +112,18 @@ public class OrderController {
 
             if (applicablePromoCode.isPresent() && promoCodeService.isPromoCodeValid(applicablePromoCode.get().getCode())) {
                 PromoCode code = applicablePromoCode.get();
-                System.out.println("Applicable promo code found: " + code.getCode());
-                double discount = calculateDiscount(totalPrice, code);
-                discountedPrice -= discount;
-                if (discountedPrice < 0) {
-                    discountedPrice = 0;
+
+                // Check if the total price meets the minimum spend amount
+                if (totalPrice >= code.getMinSpendAmount()) {
+                    double discount = calculateDiscount(totalPrice, code);
+                    discountedPrice -= discount;
+                    if (discountedPrice < 0) {
+                        discountedPrice = 0;
+                    }
+                    code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                    promoCodeRepository.save(code);
+                    effectivePromoCode = code.getCode();
                 }
-                code.setMaxUsageCount(code.getMaxUsageCount() - 1);
-                promoCodeRepository.save(code);
-                effectivePromoCode = code.getCode();
             }
         }
 

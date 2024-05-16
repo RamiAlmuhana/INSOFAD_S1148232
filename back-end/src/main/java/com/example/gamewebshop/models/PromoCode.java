@@ -14,6 +14,7 @@ public class PromoCode {
     private LocalDateTime expiryDate;
     private int maxUsageCount;
     private PromoCodeType type;
+    private double minSpendAmount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -21,13 +22,14 @@ public class PromoCode {
 
     // Constructors, getters, and setters
 
-    public PromoCode(String code, double discount, LocalDateTime expiryDate, int maxUsageCount, PromoCodeType type, Category category) {
+    public PromoCode(String code, double discount, LocalDateTime expiryDate, int maxUsageCount, PromoCodeType type, Category category, double minSpendAmount) {
         this.code = code;
         this.discount = discount;
         this.expiryDate = expiryDate;
         this.maxUsageCount = maxUsageCount;
         this.type = type;
         this.category = category;
+        this.minSpendAmount = minSpendAmount;
     }
 
     public PromoCode() {}
@@ -86,6 +88,14 @@ public class PromoCode {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public double getMinSpendAmount() {
+        return minSpendAmount;
+    }
+
+    public void setMinSpendAmount(double minSpendAmount) {
+        this.minSpendAmount = minSpendAmount;
     }
 
     public enum PromoCodeType {

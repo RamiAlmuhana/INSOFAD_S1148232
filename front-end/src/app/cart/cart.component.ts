@@ -24,6 +24,10 @@ export class CartComponent implements OnInit {
   promoApplied: boolean = this.checkPromoApplied();
   appliedPromoCode: string = localStorage.getItem('promoCode') || '';
   displayedDiscount: string = localStorage.getItem('displayedDiscount') || '0';
+  promoCodeError: boolean = false; // New field for error flag
+  promoCodeErrorMessage: string = ''; // New field for error message
+  orderError: boolean = false; // New field for order error
+  orderErrorMessage: string = ''; // New field for order error message
 
   constructor(private cartService: CartService, private router: Router, private authService: AuthService, private http: HttpClient) {}
 
@@ -34,15 +38,15 @@ export class CartComponent implements OnInit {
       this.amountOfProducts = products.length;
       this.checkLoginState();
       if (this.promoApplied) {
-        this.discount = parseFloat(this.displayedDiscount);  // Gebruik de opgeslagen korting als de promo toegepast is
+        this.discount = parseFloat(this.displayedDiscount);
       }
     });
   }
 
   public clearCart() {
     this.cartService.clearCart();
-    localStorage.removeItem('promoCode'); // Verwijder de promo-code
-    localStorage.removeItem('promoApplied'); // Optioneel, verwijder ook andere gerelateerde items
+    localStorage.removeItem('promoCode');
+    localStorage.removeItem('promoApplied');
     localStorage.removeItem('discountValue');
     localStorage.removeItem('discountType');
     localStorage.removeItem('displayedDiscount');
@@ -50,6 +54,8 @@ export class CartComponent implements OnInit {
     this.promoApplied = false;
     this.discount = 0;
     this.appliedPromoCode = '';
+    this.promoCodeError = false; // Reset error flag
+    this.orderError = false; // Reset order error flag
   }
 
   public removeProductFromCart(product_index: number) {
@@ -70,8 +76,11 @@ export class CartComponent implements OnInit {
 
   onOrder() {
     if (!this.userIsLoggedIn) {
+      this.orderError = true;
+      this.orderErrorMessage = 'You need to be logged in to place an order.';
       this.router.navigateByUrl('/auth/login');
     } else {
+      this.orderError = false;
       this.router.navigateByUrl('/orders');
     }
   }
@@ -84,24 +93,36 @@ export class CartComponent implements OnInit {
 
   applyPromoCode() {
     if (this.promoApplied) {
-      alert('You can only use one promo code per order.');
+      this.promoCodeError = true;
+      this.promoCodeErrorMessage = 'You can only use one promo code per order.';
       return;
     }
 
     if (this.products_in_cart.length === 0) {
-      alert('No products found');
+      this.promoCodeError = true;
+      this.promoCodeErrorMessage = 'No products found';
       return;
     }
 
     const url = `${environment.base_url}/promocodes/validate?code=${this.promoCode}`;
-    this.http.get<{ discount: number, type: string }>(url).subscribe({
+    this.http.get<{ discount: number, type: string, minSpendAmount: number }>(url).subscribe({
       next: (response) => {
-        this.discount = response.discount;
-        this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE', this.promoCode);
-        this.promoApplied = true;
-        this.appliedPromoCode = this.promoCode; // Update de weergegeven promo-code
+        const total = this.getTotalPrice();
+        if (total >= response.minSpendAmount) {
+          this.discount = response.discount;
+          this.cartService.applyDiscount(this.discount, response.type as 'FIXED_AMOUNT' | 'PERCENTAGE', this.promoCode);
+          this.promoApplied = true;
+          this.appliedPromoCode = this.promoCode;
+          this.promoCodeError = false; // Reset error flag
+        } else {
+          this.promoCodeError = true;
+          this.promoCodeErrorMessage = `Minimum spend amount for this promo code is ${response.minSpendAmount}`;
+        }
       },
-      error: () => alert('Invalid or expired promo code!')
+      error: () => {
+        this.promoCodeError = true;
+        this.promoCodeErrorMessage = 'Invalid or expired promo code!';
+      }
     });
   }
 
@@ -109,9 +130,10 @@ export class CartComponent implements OnInit {
     this.cartService.removeDiscount();
     this.promoApplied = false;
     this.discount = 0;
-    this.appliedPromoCode = ''; // Reset de weergegeven promo-code
-    alert('Promo code removed successfully.');
+    this.appliedPromoCode = '';
+    this.promoCodeError = false; // Reset error flag
   }
+
   private checkPromoApplied(): boolean {
     return localStorage.getItem('promoApplied') === 'true';
   }

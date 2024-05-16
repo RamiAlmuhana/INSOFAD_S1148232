@@ -39,6 +39,10 @@
                   <input type="text" class="form-control" placeholder="Promo code" [(ngModel)]="promoCode" name="promoCode">
                   <button [disabled]="onInvalidOrder()" class="btn btn-outline-secondary" type="button" (click)="applyPromoCode()">Apply</button>
                 </div>
+                <!-- Error message for invalid promo code -->
+                <div *ngIf="promoCodeError" class="text-danger mb-2">
+                  {{ promoCodeErrorMessage }}
+                </div>
                 <div *ngIf="promoApplied || discount > 0">
                   <p *ngIf="promoApplied" class="mb-1">Promo Code Applied: <strong>{{ appliedPromoCode }}</strong></p>
                   <p *ngIf="discount > 0" class="mb-1">Discount Applied: <strong>{{ discount | currency: 'EUR' }}</strong></p>
@@ -56,6 +60,10 @@
                 <div *ngIf="promoApplied" class="d-flex justify-content-between">
                   <p class="lead mb-0">Discounted Price:</p>
                   <p class="lead mb-0"><strong>{{ getTotalPriceWithDiscount() | currency:'EUR' }}</strong></p>
+                </div>
+                <!-- Error message for order issues -->
+                <div *ngIf="orderError" class="text-danger mb-2">
+                  {{ orderErrorMessage }}
                 </div>
               </div>
             </div>

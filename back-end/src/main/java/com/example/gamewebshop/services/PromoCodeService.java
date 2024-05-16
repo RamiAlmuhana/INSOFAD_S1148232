@@ -12,16 +12,18 @@ import java.util.Optional;
 public class PromoCodeService {
     private final PromoCodeRepository promoCodeRepository;
 
+    public PromoCodeService(PromoCodeRepository promoCodeRepository) {
+        this.promoCodeRepository = promoCodeRepository;
+    }
+
     public List<PromoCode> getAllPromoCodes() {
         return promoCodeRepository.findAll();
     }
 
-    // Voeg een nieuwe promocode toe
     public PromoCode addPromoCode(PromoCode promoCode) {
         return promoCodeRepository.save(promoCode);
     }
 
-    // Werk een bestaande promocode bij
     public PromoCode updatePromoCode(Long id, PromoCode promoCodeDetails) {
         Optional<PromoCode> promoCodeOptional = promoCodeRepository.findById(id);
         if (promoCodeOptional.isPresent()) {
@@ -30,28 +32,19 @@ public class PromoCodeService {
             existingPromoCode.setDiscount(promoCodeDetails.getDiscount());
             existingPromoCode.setExpiryDate(promoCodeDetails.getExpiryDate());
             existingPromoCode.setMaxUsageCount(promoCodeDetails.getMaxUsageCount());
-            // Voeg andere attributen toe die je wilt bijwerken
-
+            existingPromoCode.setMinSpendAmount(promoCodeDetails.getMinSpendAmount()); // Handle new field
             return promoCodeRepository.save(existingPromoCode);
         } else {
-            // Return null or throw exception if the promo code with the given id is not found
-            return null;
+            return null; // Or throw an exception
         }
     }
 
-    // Verwijder een bestaande promocode
     public void deletePromoCode(Long id) {
         promoCodeRepository.deleteById(id);
     }
 
-    // Controleer of een promocode bestaat op basis van het ID
     public boolean existsById(Long id) {
         return promoCodeRepository.existsById(id);
-    }
-
-
-    public PromoCodeService(PromoCodeRepository promoCodeRepository) {
-        this.promoCodeRepository = promoCodeRepository;
     }
 
     public Optional<PromoCode> getPromoCodeByCode(String code) {
@@ -63,9 +56,7 @@ public class PromoCodeService {
         return promoCodeOptional.isPresent() && promoCodeOptional.get().getExpiryDate().isAfter(LocalDateTime.now()) && promoCodeOptional.get().getMaxUsageCount() > 0;
     }
 
-    // Voeg deze methode toe aan je PromoCodeService-klasse
     public Optional<PromoCode> getPromoCodeById(Long id) {
         return promoCodeRepository.findById(id);
     }
-
 }
