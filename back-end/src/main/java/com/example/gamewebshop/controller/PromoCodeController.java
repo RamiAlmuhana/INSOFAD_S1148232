@@ -1,5 +1,6 @@
 package com.example.gamewebshop.controller;
 
+import com.example.gamewebshop.dao.PromoCodeRepository;
 import com.example.gamewebshop.models.PromoCode;
 import com.example.gamewebshop.services.PromoCodeService;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -15,9 +17,11 @@ import java.util.Optional;
 public class PromoCodeController {
 
     private final PromoCodeService promoCodeService;
+    private final PromoCodeRepository promoCodeRepository;
 
-    public PromoCodeController(PromoCodeService promoCodeService) {
+    public PromoCodeController(PromoCodeService promoCodeService, PromoCodeRepository promoCodeRepository) {
         this.promoCodeService = promoCodeService;
+        this.promoCodeRepository = promoCodeRepository;
     }
 
     @GetMapping
@@ -69,4 +73,24 @@ public class PromoCodeController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    @GetMapping("/promocode-stats")
+    public ResponseEntity<List<Map<String, Object>>> getPromoCodeStats() {
+        List<PromoCode> promoCodes = promoCodeRepository.findAll();
+        List<Map<String, Object>> promoCodeStats = promoCodes.stream()
+                .map(promoCode -> Map.<String, Object>of(
+                        "code", promoCode.getCode(),
+                        "usageCount", promoCode.getUsageCount(),
+                        "totalDiscountAmount", promoCode.getTotalDiscountAmount(),
+                        "discount", promoCode.getDiscount(),
+                        "expiryDate", promoCode.getExpiryDate(),
+                        "startDate", promoCode.getStartDate(),
+                        "maxUsageCount", promoCode.getMaxUsageCount(),
+                        "type", promoCode.getType(),
+                        "minSpendAmount", promoCode.getMinSpendAmount()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(promoCodeStats);
+    }
+
 }

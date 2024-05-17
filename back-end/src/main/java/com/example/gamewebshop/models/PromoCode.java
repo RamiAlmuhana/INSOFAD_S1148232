@@ -16,6 +16,8 @@ public class PromoCode {
     private int maxUsageCount;
     private PromoCodeType type;
     private double minSpendAmount;
+    private int usageCount; // New field to track usage count
+    private double totalDiscountAmount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -32,6 +34,8 @@ public class PromoCode {
         this.type = type;
         this.category = category;
         this.minSpendAmount = minSpendAmount;
+        this.usageCount = 0; // Initialize usage count
+        this.totalDiscountAmount = 0;
     }
 
     public PromoCode() {}
@@ -106,6 +110,22 @@ public class PromoCode {
 
     public void setMinSpendAmount(double minSpendAmount) {
         this.minSpendAmount = minSpendAmount;
+    }
+
+    public int getUsageCount() {
+        return usageCount;
+    }
+
+    public void setUsageCount(int usageCount) {
+        this.usageCount = usageCount;
+    }
+
+    public double getTotalDiscountAmount() {
+        return totalDiscountAmount;
+    }
+
+    public void setTotalDiscountAmount(double totalDiscountAmount) {
+        this.totalDiscountAmount = totalDiscountAmount;
     }
 
     public enum PromoCodeType {

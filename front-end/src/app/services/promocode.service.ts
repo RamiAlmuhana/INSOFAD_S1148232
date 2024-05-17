@@ -32,4 +32,9 @@ export class PromoCodeService {
   deletePromoCode(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
+
+  // New method to fetch promo code statistics
+  getPromoCodeStats(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/promocode-stats`);
+  }
 }

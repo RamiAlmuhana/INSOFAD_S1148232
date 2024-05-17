@@ -91,6 +91,8 @@ public class OrderController {
                         discountedPrice = 0;
                     }
                     code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                    code.setUsageCount(code.getUsageCount() + 1); // Increment usage count
+                    code.setTotalDiscountAmount(code.getTotalDiscountAmount() + discount); // Increment total discount amount
                     promoCodeRepository.save(code);
                 } else {
                     return ResponseEntity.badRequest().body(Map.of("message", "Total price does not meet the minimum spend amount for this promo code"));
@@ -107,12 +109,14 @@ public class OrderController {
             if (applicablePromoCode.isPresent() && promoCodeService.isPromoCodeValid(applicablePromoCode.get().getCode())) {
                 PromoCode code = applicablePromoCode.get();
                 double discount = calculateDiscount(totalPrice, code);
-                if (totalPrice - discount > 0) { // Ensure total price doesn't become zero or negative
+                if (totalPrice - discount > 0) {
                     discountedPrice -= discount;
                     if (discountedPrice < 0) {
                         discountedPrice = 0;
                     }
                     code.setMaxUsageCount(code.getMaxUsageCount() - 1);
+                    code.setUsageCount(code.getUsageCount() + 1); // Increment usage count
+                    code.setTotalDiscountAmount(code.getTotalDiscountAmount() + discount); // Increment total discount amount
                     promoCodeRepository.save(code);
                     effectivePromoCode = code.getCode();
                 }
@@ -131,6 +135,7 @@ public class OrderController {
                 "promoCode", effectivePromoCode != null ? effectivePromoCode : "No promo code used"
         ));
     }
+
 
     private double calculateTotalPrice(PlacedOrder placedOrder) {
         return placedOrder.getProducts().stream().mapToDouble(Product::getPrice).sum();

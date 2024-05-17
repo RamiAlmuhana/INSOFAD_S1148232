@@ -1,0 +1,33 @@
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Promo Code Statistics</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Promo Code</th>
+        <th>Usage Count</th>
+        <th>Total Discount Amount</th>
+        <th>Discount</th>
+        <th>Start Date</th>
+        <th>Expiry Date</th>
+        <th>Max Usage Count</th>
+        <th>Type</th>
+        <th>Min Spend Amount</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let stat of promoCodeStats">
+        <td>{{ stat.code }}</td>
+        <td>{{ stat.usageCount }}</td>
+        <td>{{ stat.totalDiscountAmount | currency:'EUR' }}</td>
+        <td>{{ stat.discount }}</td>
+        <td>{{ stat.startDate | date:'short' }}</td>
+        <td>{{ stat.expiryDate | date:'short' }}</td>
+        <td>{{ stat.maxUsageCount }}</td>
+        <td>{{ stat.type }}</td>
+        <td>{{ stat.minSpendAmount | currency:'EUR' }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
