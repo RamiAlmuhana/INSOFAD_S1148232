@@ -16,6 +16,8 @@
             <p class="card-text"><strong>Expiry Date:</strong> {{ promoCode.expiryDate }}</p>
             <p class="card-text"><strong>Max Usage Count:</strong> {{ promoCode.maxUsageCount }}</p>
             <p class="card-text"><strong>Type:</strong> {{ promoCode.type }}</p>
+            <p class="card-text"><strong>Min Spend Amount:</strong> {{ promoCode.minSpendAmount }}</p>
+            <p class="card-text"><strong>Category:</strong> {{ promoCode.category }}</p>
             <div class="d-grid gap-2 mt-3">
               <button [routerLink]="'/admin/promocode-list/promocode-update/' + promoCode.id" class="btn btn-primary btn-sm">Edit</button>
               <button (click)="deletePromoCode(promoCode.id)" class="btn btn-danger btn-sm">Delete</button>

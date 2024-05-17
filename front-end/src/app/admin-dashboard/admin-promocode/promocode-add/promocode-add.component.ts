@@ -30,6 +30,7 @@ export class PromoCodeAddComponent implements OnInit {
       expiryDate: ['', Validators.required],
       startDate: ['', Validators.required],
       maxUsageCount: ['', [Validators.required, Validators.min(1)]],
+      minSpendAmount: ['', [Validators.required, Validators.min(0)]],
       type: ['', Validators.required],
       categoryId: [null]
     });
