@@ -21,7 +21,7 @@ export class AdminDashboardComponent implements OnInit {
   navigateToAllPromo() {
     this.router.navigate(['admin/promocode-list']);
   }
-  // navigateToProductOverview() {
-  //   this.router.navigate(['dashboard/product-overview']);
-  // }
+  navigateToPromoStats() {
+    this.router.navigate(['admin/promocode-stats']);
+  }
 }
