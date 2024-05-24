@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "name": "Product 1",
+    "price": 10,
+    "amount": 1,
+    "imgURL": "https://via.placeholder.com/150"
+  }
+]
