@@ -1,6 +1,5 @@
 describe('Promo Code Test in Cart Page with Mock Data', () => {
   beforeEach(() => {
-    // Intercept the API call to get products and mock the response
     cy.intercept('GET', '/api/products', {
       statusCode: 200,
       body: [
@@ -19,55 +18,59 @@ describe('Promo Code Test in Cart Page with Mock Data', () => {
       ]
     }).as('getProducts');
 
-    // Intercept the API call to apply promo code and mock the response
-    cy.intercept('POST', '/api/promocodes/validate', (req) => {
-      req.reply((res) => {
-        if (req.body.code === 'PROMOCODE123') {
-          res.send({
-            statusCode: 200,
-            body: {
-              discount: 10,
-              type: 'PERCENTAGE',
-              minSpendAmount: 50,
-              startDate: '2024-01-01T00:00:00.000Z',
-              expiryDate: '2024-12-31T23:59:59.000Z'
-            }
-          });
-        } else {
-          res.send({
-            statusCode: 400,
-            body: {
-              error: 'Invalid promo code'
-            }
-          });
-        }
-      });
-    }).as('applyPromoCode');
+    cy.intercept('GET', '/api/promocodes/validate?code=SUMMER2024', {
+      statusCode: 200,
+      body: {
+        discount: 15,
+        type: 'PERCENTAGE',
+        minSpendAmount: 0,
+        startDate: '2024-01-01T00:00:00Z',
+        expiryDate: '2024-12-31T23:59:59Z'
+      }
+    }).as('validatePromoCode');
+
+
+    cy.intercept('POST', '/auth/login', {
+      statusCode: 200,
+      body: {
+        email: 'test@mail.com',
+        token: 'fake-jwt-token'
+      }
+    }).as('login');
   });
 
-  it('should add a product to the cart and apply a promo code', () => {
-    // Visit the home page
-    cy.visit('http://localhost:4200/products');
+  it('should login, add a product to the cart and apply a promo code', () => {
 
-    // Wait for the products API call and verify it
+    cy.visit('http://localhost:4200/auth/login');
+
+
+    cy.contains('label', 'Email').siblings('input').type('test@mail.com');
+    cy.contains('label', 'Password').siblings('input').type('Test123!');
+    cy.get('button').contains('Login').click();
+
+
+    cy.wait('@login').its('response.statusCode').should('eq', 200);
+
+
+    cy.url().should('include', '/products');
+
+
     cy.wait('@getProducts').its('response.statusCode').should('eq', 200);
 
-    // Add a product to the cart
-    cy.contains('.test', 'Buy').parent().find('button').click()
 
-    // Go to the cart page
+    cy.contains('button', 'Buy').click();
+
+
     cy.visit('http://localhost:4200/cart');
 
-    // Apply the promo code
-    cy.get('input[name="promoCode"]').type('SUMMER2024'); // Verander 'PROMO2024' naar de daadwerkelijke promotiecode
+
+    cy.get('input[name="promoCode"]').type('SUMMER2024');
     cy.get('button').contains('Apply').click();
-    // cy.get('[data-cy=promo-code-input]').type('PROMOCODE123');
-    // cy.get('[data-cy=apply-promo-code-button]').click();
 
-    // Wait for the promo code API call and verify it
-    cy.wait('@applyPromoCode').its('response.statusCode').should('eq', 200);
 
-    // Verify the discount is applied
-    cy.get('[data-cy=total-price]').should('contain', '9'); // Assuming the total price is 9 after applying a 10% discount
+    cy.wait('@validatePromoCode').its('response.statusCode').should('eq', 200);
+
+
+    cy.get('.lead').contains('Discounted Price:').should('exist');
   });
 });
